@@ -1,11 +1,423 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mini Soccer Stars — Prototype</title>
+<style>
+  :root{
+    --bg:#0b5a33;
+    --field:#2aa85a;
+    --line:#ffffffcc;
+    --panel:#072a18;
+    --accent:#ffd54d;
+  }
+  html,body{height:100%;margin:0;font-family:system-ui,Segoe UI,Roboto,Arial}
+  .wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:12px}
+  canvas{background:linear-gradient(180deg,var(--field),#0f6b3a);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+  .ui{display:flex;gap:12px;align-items:center;color:white}
+  .panel{background:var(--panel);padding:8px 12px;border-radius:8px;display:flex;gap:10px;align-items:center}
+  button{background:var(--accent);border:0;padding:8px 10px;border-radius:6px;cursor:pointer}
+  .hint{font-size:13px;color:#dff3e4}
+  #powerBar{width:180px;height:8px;background:#ffffff22;border-radius:4px;overflow:hidden}
+  #powerFill{height:100%;width:0%;background:linear-gradient(90deg,#ffd54d,#ffb86b)}
+</style>
 </head>
 <body>
-    <p1> hello world</p1>
+<div class="wrap">
+  <div class="ui">
+    <div class="panel">
+      <strong>Mini Soccer Stars</strong>
+      <div style="width:12px"></div>
+      <div>Turn: <span id="turnLabel">Player 1</span></div>
+      <div style="width:12px"></div>
+      <div>Score: <span id="scoreLabel">0 - 0</span></div>
+    </div>
+    <button id="restartBtn">Restart</button>
+  </div>
+  <canvas id="game" width="900" height="480"></canvas>
+  <div class="panel hint">
+    Drag from your disc, release to flick. Players alternate turns. Goal is the hole on each side.
+  </div>
+  <div class="panel">
+    <div id="powerBar"><div id="powerFill"></div></div>
+  </div>
+</div>
+
+<script>
+/* ---- Mini Soccer Stars Prototype ----
+   Single-file HTML/CSS/JS game:
+   - Canvas drawing
+   - Drag-to-flick controls (mouse & touch)
+   - Basic physics (velocity, friction)
+   - Elastic collisions between circles
+   - Turn-based: Player 1 (left) and Player 2 (right)
+   - Goals at left and right edges
+*/
+
+// Utility helpers
+function vec(x,y){return {x,y}}
+function add(a,b){return {x:a.x+b.x,y:a.y+b.y}}
+function sub(a,b){return {x:a.x-b.x,y:a.y-b.y}}
+function mul(a,s){return {x:a.x*s,y:a.y*s}}
+function len(a){return Math.hypot(a.x,a.y)}
+function norm(a){let L=len(a); return L?{x:a.x/L,y:a.y/L}:{x:0,y:0}}
+
+// Canvas setup
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// UI elements
+const turnLabel = document.getElementById('turnLabel');
+const scoreLabel = document.getElementById('scoreLabel');
+const restartBtn = document.getElementById('restartBtn');
+const powerFill = document.getElementById('powerFill');
+
+// Game constants
+const FRICTION = 0.995;       // global damping each frame
+const MIN_V = 0.02;          // below this, treat as stopped
+const TIMESTEP = 1/60;
+const DISC_RADIUS = 24;
+const BALL_RADIUS = 18;
+const GOAL_HEIGHT = 160;
+const GOAL_DEPTH = 10; // just visual
+const MAX_FLICK = 18;  // clamp flick power
+
+// Game state
+let turn = 1; // 1 or 2
+let scores = [0,0];
+let objects = []; // circles: {x,y,vx,vy,r,m,color,type}
+let dragging = null; // reference to object being dragged
+let dragStart = null;
+let dragPos = null;
+let lastTime = null;
+
+// initialize/reset
+function reset(){
+  turn = 1;
+  scores = [0,0];
+  objects = [];
+  // Player 1 discs (left side) - two discs
+  objects.push(makeDisc(120, H/2 - 50, DISC_RADIUS, 1, '#e53935', 'p1'));
+  objects.push(makeDisc(120, H/2 + 50, DISC_RADIUS, 1, '#e53935', 'p1'));
+  // Player 2 discs (right side)
+  objects.push(makeDisc(W-120, H/2 - 50, DISC_RADIUS, 1, '#1565c0', 'p2'));
+  objects.push(makeDisc(W-120, H/2 + 50, DISC_RADIUS, 1, '#1565c0', 'p2'));
+  // Ball (center)
+  objects.push(makeDisc(W/2, H/2, BALL_RADIUS, 0.8, '#ffd54d', 'ball'));
+  updateUI();
+}
+function makeDisc(x,y,r,mass,color,type){
+  return {x,y,vx:0,vy:0,r,m:mass,color,type};
+}
+
+// UI update
+function updateUI(){
+  turnLabel.textContent = (turn===1)?'Player 1':'Player 2';
+  scoreLabel.textContent = `${scores[0]} - ${scores[1]}`;
+}
+
+// Input handling (mouse & touch)
+function getMousePos(e){
+  const rect = canvas.getBoundingClientRect();
+  if (e.touches && e.touches[0]) {
+    return {x: (e.touches[0].clientX - rect.left)*(canvas.width/rect.width),
+            y: (e.touches[0].clientY - rect.top)*(canvas.height/rect.height)};
+  } else {
+    return {x: (e.clientX - rect.left)*(canvas.width/rect.width),
+            y: (e.clientY - rect.top)*(canvas.height/rect.height)};
+  }
+}
+
+function findPlayerDiscAt(pos){
+  // Only allow dragging the discs that belong to current player AND are (nearly) stationary
+  for (let obj of objects){
+    if ((turn===1 && obj.type==='p1') || (turn===2 && obj.type==='p2')){
+      const dx = obj.x - pos.x, dy = obj.y - pos.y;
+      if (Math.hypot(dx,dy) <= obj.r + 6 && Math.hypot(obj.vx, obj.vy) < 0.6){
+        return obj;
+      }
+    }
+  }
+  return null;
+}
+canvas.addEventListener('mousedown', (e)=>{
+  const pos = getMousePos(e);
+  const disc = findPlayerDiscAt(pos);
+  if (disc){ dragging = disc; dragStart = {...pos}; dragPos = {...pos}; updatePowerBar(0); }
+});
+canvas.addEventListener('mousemove', (e)=>{
+  if (!dragging) return;
+  dragPos = getMousePos(e);
+  updatePowerBarFromDrag();
+});
+canvas.addEventListener('mouseup', (e)=>{
+  if (!dragging) return;
+  const pos = getMousePos(e);
+  releaseDrag(pos);
+});
+canvas.addEventListener('mouseleave', (e)=>{
+  if (dragging) { releaseDrag(getMousePos(e)); }
+});
+
+// Touch
+canvas.addEventListener('touchstart', (e)=>{ e.preventDefault(); const pos=getMousePos(e); const d=findPlayerDiscAt(pos); if(d){dragging=d;dragStart={...pos};dragPos={...pos}; updatePowerBar(0);} }, {passive:false});
+canvas.addEventListener('touchmove', (e)=>{ if(!dragging) return; e.preventDefault(); dragPos=getMousePos(e); updatePowerBarFromDrag(); }, {passive:false});
+canvas.addEventListener('touchend', (e)=>{ if(!dragging) return; releaseDrag(dragPos); }, {passive:false});
+
+// release drag -> apply velocity
+function releaseDrag(pos){
+  const dx = dragStart.x - pos.x;
+  const dy = dragStart.y - pos.y;
+  const power = Math.min(MAX_FLICK, Math.hypot(dx,dy)/8);
+  if (power > 0.1){
+    const dir = norm({x:dx,y:dy});
+    // apply to disc as impulse scaled by mass
+    dragging.vx += dir.x * power;
+    dragging.vy += dir.y * power;
+  }
+  dragging = null; dragStart = null; dragPos = null;
+  updatePowerBar(0);
+  // After flick, change turn (we keep simple: switch immediately)
+  turn = (turn===1)?2:1;
+  updateUI();
+}
+
+// power bar UI
+function updatePowerBarFromDrag(){
+  if (!dragStart || !dragPos) return;
+  const dx = dragStart.x - dragPos.x;
+  const dy = dragStart.y - dragPos.y;
+  const power = Math.min(1, Math.hypot(dx,dy)/(MAX_FLICK*8));
+  updatePowerBar(power);
+}
+function updatePowerBar(p){
+  powerFill.style.width = `${Math.round(p*100)}%`;
+}
+
+// Physics loop
+function step(dt){
+  // integrate velocities
+  for (let obj of objects){
+    obj.x += obj.vx * dt;
+    obj.y += obj.vy * dt;
+    // wall collisions (bounce)
+    if (obj.x - obj.r < 0){
+      // check left goal gap
+      if (obj.y > (H-GOAL_HEIGHT)/2 && obj.y < (H+GOAL_HEIGHT)/2 && obj.type === 'ball'){
+        // ball in left goal
+        scores[1]++; // player2 scores (right side scored left goal)
+        spawnGoalReset();
+        return;
+      } else {
+        obj.x = obj.r;
+        obj.vx *= -0.8;
+      }
+    }
+    if (obj.x + obj.r > W){
+      if (obj.y > (H-GOAL_HEIGHT)/2 && obj.y < (H+GOAL_HEIGHT)/2 && obj.type === 'ball'){
+        // ball in right goal
+        scores[0]++; // player1 scores
+        spawnGoalReset();
+        return;
+      } else {
+        obj.x = W - obj.r;
+        obj.vx *= -0.8;
+      }
+    }
+    if (obj.y - obj.r < 0){ obj.y = obj.r; obj.vy *= -0.8; }
+    if (obj.y + obj.r > H){ obj.y = H - obj.r; obj.vy *= -0.8; }
+  }
+
+  // collisions pairwise (circle-circle)
+  for (let i=0;i<objects.length;i++){
+    for (let j=i+1;j<objects.length;j++){
+      resolveCollision(objects[i], objects[j]);
+    }
+  }
+
+  // friction
+  for (let obj of objects){
+    obj.vx *= FRICTION;
+    obj.vy *= FRICTION;
+    if (Math.abs(obj.vx) < MIN_V) obj.vx = 0;
+    if (Math.abs(obj.vy) < MIN_V) obj.vy = 0;
+  }
+}
+
+// collision resolution elastic
+function resolveCollision(a,b){
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const dist = Math.hypot(dx,dy);
+  const minDist = a.r + b.r;
+  if (dist <= 0 || dist >= minDist) return;
+
+  // positional correction: push them apart
+  const overlap = minDist - dist;
+  const nx = dx / dist, ny = dy / dist;
+  const totalMass = a.m + b.m;
+  const ratioA = b.m / totalMass;
+  const ratioB = a.m / totalMass;
+  a.x -= nx * overlap * ratioA;
+  a.y -= ny * overlap * ratioA;
+  b.x += nx * overlap * ratioB;
+  b.y += ny * overlap * ratioB;
+
+  // relative velocity along normal
+  const rvx = b.vx - a.vx;
+  const rvy = b.vy - a.vy;
+  const velAlongNormal = rvx * nx + rvy * ny;
+  if (velAlongNormal > 0) return; // moving apart
+
+  const restitution = 0.88; // bounciness
+  // impulse scalar
+  const j = -(1 + restitution) * velAlongNormal / (1/a.m + 1/b.m);
+  const impulseX = j * nx;
+  const impulseY = j * ny;
+
+  a.vx -= impulseX / a.m;
+  a.vy -= impulseY / a.m;
+  b.vx += impulseX / b.m;
+  b.vy += impulseY / b.m;
+}
+
+// when goal scored -> brief reset of positions
+function spawnGoalReset(){
+  updateUI();
+  // reset positions after small animation-ish delay (we'll perform immediate reset for simplicity)
+  // reposition discs and ball, clear velocities
+  objects = [];
+  objects.push(makeDisc(120, H/2 - 50, DISC_RADIUS, 1, '#e53935', 'p1'));
+  objects.push(makeDisc(120, H/2 + 50, DISC_RADIUS, 1, '#e53935', 'p1'));
+  objects.push(makeDisc(W-120, H/2 - 50, DISC_RADIUS, 1, '#1565c0', 'p2'));
+  objects.push(makeDisc(W-120, H/2 + 50, DISC_RADIUS, 1, '#1565c0', 'p2'));
+  objects.push(makeDisc(W/2, H/2, BALL_RADIUS, 0.8, '#ffd54d', 'ball'));
+  // keep turn to the player who conceded (simple rule) -> let scoring player keep turn? We'll set to player who conceded to make comeback possible
+  turn = 1;
+  updateUI();
+}
+
+// rendering
+function draw(){
+  // clear
+  ctx.clearRect(0,0,W,H);
+
+  // field lines
+  ctx.save();
+  // center line
+  ctx.strokeStyle = 'rgba(255,255,255,.25)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W/2, 20);
+  ctx.lineTo(W/2, H-20);
+  ctx.stroke();
+
+  // center circle
+  ctx.beginPath();
+  ctx.arc(W/2, H/2, 60, 0, Math.PI*2);
+  ctx.stroke();
+
+  // goals (left & right)
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(-GOAL_DEPTH, (H-GOAL_HEIGHT)/2, GOAL_DEPTH, GOAL_HEIGHT); // left shadow
+  ctx.fillRect(W, (H-GOAL_HEIGHT)/2, GOAL_DEPTH, GOAL_HEIGHT); // right shadow
+
+  // goal outlines
+  ctx.strokeStyle = '#ffffffaa';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(-GOAL_DEPTH+1, (H-GOAL_HEIGHT)/2+1, GOAL_DEPTH-2, GOAL_HEIGHT-2);
+  ctx.strokeRect(W+1, (H-GOAL_HEIGHT)/2+1, GOAL_DEPTH-2, GOAL_HEIGHT-2);
+  ctx.restore();
+
+  // draw objects
+  for (let obj of objects){
+    ctx.save();
+    // shadow
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.ellipse(obj.x+6, obj.y+8, obj.r*0.95, obj.r*0.5, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // disc body
+    ctx.beginPath();
+    ctx.fillStyle = obj.color;
+    ctx.arc(obj.x, obj.y, obj.r, 0, Math.PI*2);
+    ctx.fill();
+
+    // rim / highlight
+    ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // type mark
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = `${Math.max(12,obj.r/2)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (obj.type === 'ball') ctx.fillText('⚽', obj.x, obj.y+1);
+    else if (obj.type === 'p1') ctx.fillText('1', obj.x, obj.y+1);
+    else if (obj.type === 'p2') ctx.fillText('2', obj.x, obj.y+1);
+
+    ctx.restore();
+  }
+
+  // draw drag arrow if dragging
+  if (dragging && dragStart && dragPos){
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(dragging.x, dragging.y);
+    ctx.lineTo(dragPos.x, dragPos.y);
+    ctx.stroke();
+
+    // arrow head
+    const d = sub(dragPos, {x:dragging.x,y:dragging.y});
+    const L = len(d) || 1;
+    const ux = d.x / L, uy = d.y / L;
+    const arrowP = {x:dragPos.x, y:dragPos.y};
+    const left = {x: arrowP.x - ux*12 + uy*6, y: arrowP.y - uy*12 - ux*6};
+    const right= {x: arrowP.x - ux*12 - uy*6, y: arrowP.y - uy*12 + ux*6};
+    ctx.beginPath();
+    ctx.moveTo(arrowP.x, arrowP.y);
+    ctx.lineTo(left.x,left.y);
+    ctx.moveTo(arrowP.x, arrowP.y);
+    ctx.lineTo(right.x,right.y);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+}
+
+// main loop
+function loop(ts){
+  if (!lastTime) lastTime = ts;
+  const dtMs = ts - lastTime;
+  lastTime = ts;
+  // clamp dt to avoid big jumps
+  const dt = Math.min(40, dtMs) / 1000;
+  // run several fixed steps for stability
+  let remaining = dt;
+  while (remaining > 0){
+    const stepTime = Math.min(1/30, remaining);
+    step(stepTime * 60); // scale so velocities are tuned to frames-per-second used in step
+    remaining -= stepTime;
+  }
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// Restart button
+restartBtn.addEventListener('click', () => {
+  reset();
+});
+
+// initial start
+reset();
+requestAnimationFrame(loop);
+
+</script>
 </body>
 </html>
