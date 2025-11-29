@@ -1,0 +1,19 @@
+/*start page*/
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+
+
+.image {
+    width: 100vw; /* Fill the browser width */
+    height: 100vh; /* Fill the browser height */
+}
+
+.image .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Prevent stretching while filling */
+}
