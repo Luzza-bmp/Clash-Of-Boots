@@ -45,3 +45,19 @@
     object-fit: cover;
 }
 
+/*small icon logo*/
+.image {
+    width: 200px;
+    height: 164px;
+}
+
+.image .logo-removebg {
+    position: fixed;
+    top: 40px;
+    left: 0;
+    width: 162px;
+    height: 124px;
+    aspect-ratio: 1.23;
+    object-fit: cover;
+}
+
