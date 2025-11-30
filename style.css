@@ -12,3 +12,18 @@
     aspect-ratio: 1.56;
     object-fit: cover;
 }
+
+.image {
+    width: 549px;
+    height: 549px;
+}
+
+.image .removebg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 549px;
+    height: 549px;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
