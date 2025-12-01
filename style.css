@@ -1,96 +1,23 @@
-/* ----------------------------- */
-/* 1. Global Reset + Base Styles */
-/* ----------------------------- */
-@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
-
-* {
+*{
+    margin: 0px;
     box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden; /* prevent scrolling */
-}
-
-a {
-    text-decoration: none;
-}
-
-button:focus-visible {
-    outline: 2px solid #4a90e2 !important;
-    outline: -webkit-focus-ring-color auto 5px !important;
-}
-
-/* ----------------------------- */
-/* 2. Background Container */
-/* ----------------------------- */
-.image {
-    position: relative;
-    width: 900;
-    height: 1920;
-    background-image: url("img/background.png");
+.background{
+    background-image: url(./img/background.png);
+    opacity: 0.30;
     background-size: cover;
-    background-position: center;
     background-repeat: no-repeat;
-    overflow: hidden;
+    height: 100vh;
+    width: 100%;
 }
 
-/* ----------------------------- */
-/* 3. Main Logo Centered */
-/* ----------------------------- */
-.removebg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 549px; /* max for large screens */
-    height: auto;
-    z-index: 2;
+.team-1-box{
+    width : 20%;
+    height : 20vh;
+    display: flex;
+    background-color: red;
+    justify-content: right;
+
 }
-
-/* ----------------------------- */
-/* 4. Start Button Below Logo */
-/* ----------------------------- */
-.png-clipart-push {
-    position: absolute;
-    top: 65%;       /* below the main logo */
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 436px;
-    height: auto;
-    cursor: pointer;
-    z-index: 3;
-   
-}
-
-
-
-/* ----------------------------- */
-/* 5. Small Icon Logo (top-left) */
-/* ----------------------------- */
-.logo-removebg {
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 162px;
-    height: auto;
-   z-index: 4;
-}
-
-/* ----------------------------- */
-/* 6. Optional: Responsive tweaks */
-/* ----------------------------- */
-@media (max-width: 768px) {
-    .removebg {
-        width: 40vw;
-    }
-    .png-clipart-push {
-        width: 30vw;
-    }
-    .logo-removebg {
-        width: 15vw;
-    }
-}
+    
