@@ -1,0 +1,102 @@
+*{
+    margin: 0px;
+    box-sizing: border-box;
+    transition: 1s;
+}
+.img-bg{
+    background-image: url("/images/background.png");
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+}
+.player-info{
+    width: 100%;
+    height: 65vh;
+    display: flex;
+}
+.player-1{
+    width: 35%;
+    height: 100%;
+    float: left;
+    padding: 47px 47px 0px 47px;
+    display: flex;
+    flex-direction: column;
+}
+.player-1 .player-1-title{
+    width: 295px;
+    height: 89px;
+    background-image: url("/images/player-1.png");
+    background-size: cover;
+    border-radius: 40px;
+    background-position: center;
+    margin: auto;
+}
+.player-1 .player-1-logo{
+    height: 215px;
+    background-image: url("/images/team-1.png");
+    background-size: 280px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.player-1 .player-1-name{
+    width: 100%;
+    height: 100px;
+    padding-top: 30px;
+}
+.player-1 .player-1-name .player-1-name-text{
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: hsl(0, 0%, 91%);
+    font-size: 20px;
+    text-align: left;
+    padding-left: 20px;
+    border-radius: 20px;
+}
+.img-vs{
+    width: 30%;
+    height: 100%;
+    background-image: url("/images/versus.png");
+    background-size: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.player-2{
+    width: 35%;
+    height: 100%;
+    float: left;
+    padding: 47px 47px 0px 47px;
+    display: flex;
+    flex-direction: column;
+}
+.player-2 .player-2-title{
+    width: 295px;
+    height: 89px;
+    background-image: url("/images/player-2.png");
+    background-size: cover;
+    border-radius: 40px;
+    background-position: center;
+    margin: auto;
+}
+.player-2 .player-2-logo{
+    height: 215px;
+    background-image: url("/images/team-2.png");
+    background-size: 280px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.player-2 .player-2-name{
+    width: 100%;
+    height: 100px;
+    padding-top: 30px;
+}
+.player-2 .player-2-name .player-2-name-text{
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: hsl(0, 0%, 91%);
+    font-size: 20px;
+    text-align: left;
+    padding-left: 20px;
+    border-radius: 20px;
+}
