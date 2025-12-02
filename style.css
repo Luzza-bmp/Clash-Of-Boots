@@ -5,19 +5,53 @@
 
 .background{
     background-image: url(./img/background.png);
-    opacity: 0.30;
     background-size: cover;
     background-repeat: no-repeat;
-    height: 100vh;
     width: 100%;
+    height: 100vh;
 }
 
-.team-1-box{
-    width : 20%;
-    height : 20vh;
+.team-container{
+    width: 100%;
+    height: 11vh;
     display: flex;
-    background-color: red;
-    justify-content: right;
+    justify-content: space-between;
+    
+   
+}
+.team-1-box ,.team-2-box{
+    width: 5%;
+    height: 8vh;
+    display: flex;
+ 
+}
+
+.team-1,.team-2{
+    width: 100%;
+    height: 98%;
+    background-size: 64px;
+    background-repeat: no-repeat;
+}
+
+ .team-1{
+    background-image: url(./img/team-1.png);
+    background-position: left;
 
 }
+
+.team-2{
+     background-image: url(./img/team-2.png);
+     background-position: right;
+   }
+
+.score-board{
+    width: 10%;
+    height: 8vh;
+    display: flex;
+    background-color: blue;
+    justify-content: center;   
+    align-items: center;   
+}
+
+
     
