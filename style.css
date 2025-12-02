@@ -9,6 +9,7 @@
     background-repeat: no-repeat;
     width: 100%;
     height: 100vh;
+   
 }
 
 .team-container{
@@ -64,12 +65,21 @@
 
 .futsal-box{
     width: 100%;
-    height: 300vh;
+    height: 89vh;
     display: flex;
-    justify-content: center;   
-    align-items: center;  
-    padding: 20px;
-    background-color: aqua;
+    justify-content: center;  
+   
+  
+}
+
+.futsal{
+    width: 71%;
+    height: 89vh;
+    background-image: url(./img/ground.png);
+    background-repeat: no-repeat;
+    background-size: 868px;
+    background-position: center;
+   
 }
 
     
