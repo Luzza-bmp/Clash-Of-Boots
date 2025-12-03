@@ -1,0 +1,21 @@
+*{
+margin : 0px;
+box-sizing: border-box;
+}
+
+.background{
+    background-image: url(./img/background.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100vh;
+}
+.victory-box{
+    width: 100%;
+    height: 89vh;
+    display: flex;
+    justify-content: center;  
+    background-color: aquamarine;
+   
+}
+
