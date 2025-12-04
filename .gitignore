@@ -5,8 +5,6 @@ cd Clash-Of-Boots
 git status
 git add .
 git commit -m " "
-git push origin main:sample
-
 git push upstream main:esha
 
  note:-
