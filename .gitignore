@@ -1,0 +1,14 @@
+( branch is locally in main ):-
+
+cd Clash-Of-Boots
+
+git status
+git add .
+git commit -m " "
+git push origin main:sample
+
+git push upstream main:esha
+
+ note:-
+1. git fetch is done only if there is any changes in the main branch of original repo 
+2. git checkout __ is used to change the branch locally , branch which already exsits 
