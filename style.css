@@ -80,11 +80,11 @@
 }
 
 .futsal{
-    width: 91%;
-    height: 88vh;
-    background-image: url(./img/ground-1.png);
+    width: 96%;
+    height: 89vh;
+    background-image: url(./img/final-ground.png);
     background-repeat: no-repeat;
-    background-size: 1076px;
+    background-size: 1231px;
     background-position: center;
 
    
