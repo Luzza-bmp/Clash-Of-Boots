@@ -100,3 +100,17 @@
     padding-left: 20px;
     border-radius: 20px;
 }
+.enter-btn-box{
+    width: 100%;
+    height: 30vh;
+    display: flex;
+    justify-content: center;
+}
+.enter-btn{
+    width: 30%;
+    height: 70%;
+    background-image: url("/images/enter.png");
+    background-size: 270px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
