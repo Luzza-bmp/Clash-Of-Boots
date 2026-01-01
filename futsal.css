@@ -1,65 +1,79 @@
-*{
+* {
     margin: 0px;
     box-sizing: border-box;
 }
-.background{
+
+.background {
     background-image: url(./img/background.png);
     background-size: cover;
     background-repeat: no-repeat;
     width: 100%;
     height: 100vh;
 }
-.team-container{
+
+.team-container {
     width: 100%;
     height: 11vh;
     display: flex;
     justify-content: space-evenly;
 }
-.team-1-box ,.team-2-box{
+
+.team-1-box,
+.team-2-box {
     width: 48%;
     height: 11vh;
     display: flex;
 }
-.team-red{
+
+.team-red {
     background-color: hsl(0, 100%, 50%);
     width: 73%;
     height: 100%;
     border: 3px solid black;
 }
-.team-blue{
+
+.team-blue {
     background-color: rgb(35, 97, 255);
     width: 73%;
     height: 100%;
     border: 3px solid black;
 }
-.team-1,.team-2{
+
+.team-1,
+.team-2 {
     width: 28%;
     height: 150%;
     background-size: cover;
     background-repeat: no-repeat;
 }
-.team-1{
+
+.team-1 {
     background-image: url(./img/team-1.png);
     background-position: left;
 }
-.team-2{
-     background-image: url(./img/team-2.png);
-     background-position: right;
-   }
-.player-name{
+
+.team-2 {
+    background-image: url(./img/team-2.png);
+    background-position: right;
+}
+
+.player-name {
     font-size: 65px;
     font-family: 'Times New Roman', Times, serif;
     font-weight: bolder;
     display: inline-flex;
     align-self: center;
 }
-.red-name{
+
+.red-name {
     float: left;
 }
-.blue-name{
+
+.blue-name {
     float: right;
 }
-.score-count{
+
+.score-count {
     width: 15%;
     font-size: 67px;
     font-family: 'Times New Roman', Times, serif;
@@ -67,24 +81,28 @@
     display: inline-flex;
     align-self: center;
 }
-.red-score{
+
+.red-score {
     float: right;
     border-left: 3px solid black;
     padding-left: 10px;
 }
-.blue-score{
+
+.blue-score {
     float: left;
     border-right: 3px solid black;
     padding-left: 10px;
 }
-.turn-board{
+
+.turn-board {
     width: 15%;
     height: 10vh;
     display: flex;
-    justify-content: center;   
-    align-items: center;   
+    justify-content: center;
+    align-items: center;
 }
-.turn{
+
+.turn {
     width: 100%;
     height: 200%;
     background-color: rgb(0, 0, 0);
@@ -96,21 +114,23 @@
     background-position: center;
     background-repeat: no-repeat;  */
 }
-.turn p{
+
+.turn p {
     height: 100%;
     width: 100%;
     font-size: 70px;
     text-align: center;
     padding: 40px 0px 0px 10px;
 }
-.futsal-box{
+
+.futsal-box {
     width: 100%;
     height: 89vh;
     display: flex;
-    justify-content: center;  
+    justify-content: center;
 }
 
-.futsal{
+.futsal {
     width: 96%;
     height: 89vh;
     background-image: url(./img/final-ground.png);
@@ -118,5 +138,3 @@
     background-size: 1231px;
     background-position: center;
 }
-
-    
