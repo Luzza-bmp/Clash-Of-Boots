@@ -4,7 +4,7 @@
 }
 
 .game-mode{
-  background-image: url("/img/background.png");
+  background-image: url("./img/background.png");
   background-size:cover;
   background-repeat: no-repeat;
   width:100%;
@@ -19,7 +19,7 @@
   display:flex;
 }
 .small-logo{
-  background-image: url("/img/logo-removebg.png");
+  background-image: url("./img/logo-removebg.png");
   background-size:65px;
   background-repeat: no-repeat;
   margin-left: 1180px;
@@ -34,7 +34,7 @@
   display: inline-flex;
 }
 .title{
- background-image: url("/img/Game\ Mode.png");
+ background-image: url("./img/Game-Mode.png");
   background-size: 50%;
   background-repeat: no-repeat;
    background-position: center; 
@@ -49,13 +49,13 @@
   display:flex;
 }
 .one{
-  background-image: url("/img/1.jpg");
+  background-image: url("./img/1.jpg");
 }
 .three{
-  background-image: url("/img/3.jpg");
+  background-image: url("./img/3.jpg");
 }
 .five{
-  background-image: url("/img/5.jpg");
+  background-image: url("./img/5.jpg");
 }
 .one, .three, .five{
   background-size: cover;
