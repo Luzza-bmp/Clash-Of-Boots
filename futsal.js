@@ -335,15 +335,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var dx = dragStart.x - x;
         var dy = dragStart.y - y;
-
-        var forceVector = Vector.create(dx * 0.32, dy * 0.32);  // Adjusted multiplier
-
-        var magnitude = Vector.magnitude(forceVector);
-        if (magnitude > maxForce) {
-            forceVector = Vector.mult(Vector.normalise(forceVector), maxForce);
-        }
-
-        if (magnitude > 0.0005) {
+        
+        // Calculate the raw distance first
+        var rawDistance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Scale force based on distance (0 to maxForce)
+        var forceMagnitude = Math.min(rawDistance * 0.0006, maxForce);  // Scale up distance to force
+        
+        // Create normalized direction vector
+        if (rawDistance > 0.0005) {
+            var normalizedDx = dx / rawDistance;
+            var normalizedDy = dy / rawDistance;
+            
+            // Apply force in the direction with calculated magnitude
+            var forceVector = Vector.create(normalizedDx * forceMagnitude, normalizedDy * forceMagnitude);
+            
             Body.applyForce(selectedBody, selectedBody.position, forceVector);
             gameState.canShoot = false;
             gameState.isTurnActive = true;
