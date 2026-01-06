@@ -63,7 +63,23 @@
 .blue-name {
     float: right;
 }
+.red-score,
+.blue-score {
+    display: inline-block;   /* VERY IMPORTANT */
+    width: 50px;
+    font-weight: bold;
+    color: #0b0b0b;
+}
 
+.red-score {
+    position: relative;
+    font-size: 50px;
+}
+
+.blue-score {
+    text-align: right;
+    font-size: 26px;
+}
 .score-count {
     width: 10%;
     font-size: 67px;
@@ -81,9 +97,9 @@
     height: 4vh;
     display: flex;
     justify-content: center;
-    position: fixed;
-    top:65px;
-    left:610px;;
+    position: relative;
+    top:70px;
+    left:8px;;
 }
 
 .turn {
@@ -103,36 +119,35 @@
     height: 100%;
     width: 100%;
     font-size: 30px;
-    position:fixed;
-    top:40px;
-    left:685px;
-    padding: 40px 0px 0px 10px;
+    position:absolute;
+    top:10px;
+    left:70px;
+    
 }
 
 
 
 .top-bar {
-    width: 85%;                        /* long rectangle */
-    height: 90px;                       /* rectangle height */
-    background-color: rgba(95, 145, 199, 0.95); /* white with transparency */
-    border-radius: 60px;                /* makes it curved horizontally */
+    width: 85%;                       
+    height: 90px;                       
+    background-color: rgba(95, 145, 199, 0.95); 
+    border-radius: 60px;                
     box-shadow: 0 6px 15px rgba(87, 134, 153, 0.25);
 
     display: flex;
-    justify-content: space-between;     /* left, center, right spacing */
+    justify-content: space-between;    
     align-items: center;
-    padding: 0 40px;                    /* space inside rectangle */
+    padding: 0 40px;                    
 
     font-size: 40px;
     font-weight: bold;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.25); /* optional shadow */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25); 
 
     /* 🔥 TOP CENTER POSITION */
-    position: fixed;                    /* stays at top of screen */
-    top: 0px;                           /* distance from top */
-    left: 50%;                           /* horizontal center */
-    transform: translateX(-50%);         /* center exactly */
-   
+    position: absolute;                   
+    top: 0px;                           
+    left: 50%;                           
+    transform: translateX(-50%);         
 }
 
 /* Individual text styling */
@@ -148,22 +163,25 @@
 .right-score {
     color: rgb(93, 214, 200);
 }
+.team-2-box,
+.team-1-box {
+    position: relative;
+}
 
 
-
-.team-red {
+.red-name {
     font-family: 'Times New Roman', Times, serif;
-    position: fixed;
+    position: absolute;
     top: 3px;
     left:150px;
     color:rgb(32, 11, 51);
 
 }
-.team-blue {
+.blue-name {
     font-family: 'Times New Roman', Times, serif;
-    position: fixed;
+    position: absolute;
     top:3px;
-    left:1090px;
+    left:300px;
     color:rgb(45, 30, 10);
 }
 
