@@ -3,7 +3,7 @@
     box-sizing: border-box;
 }
 .background{
-    background-image: url("/img/background.png");
+    background-image: url("./img/background.png");
     background-size: cover;
     background-repeat: no-repeat;
     width: 100%;
@@ -18,7 +18,7 @@
 .game-logo{
     width: 40%;
     height: 100%;
-    background-image: url("/img/COB.png");
+    background-image: url("./img/COB.png");
     background-size: 400px;
     background-repeat: no-repeat;
     background-position: center;
@@ -32,7 +32,7 @@
 .game-enter{
     width: 100%;
     height: 30vh;
-    background-image: url("/img/start.png");
+    background-image: url("./img/start.png");
     background-size: 327px;
     background-repeat: no-repeat;
     background-position: center;
