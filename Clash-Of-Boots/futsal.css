@@ -33,6 +33,7 @@
 .dropdown li{
     padding: 10px 15px;
     color: white;
+    z-index: 1000;
 }
 .dropdown a{
     padding: 10px 15px;
@@ -51,7 +52,7 @@
     font-size: 50px;       
     color: #101010;        
     cursor: pointer;       
-    z-index: 1000;
+    z-index: 100;
 }
 .menu:active {
     transform: scale(0.9); 
