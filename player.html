@@ -22,8 +22,24 @@
             </div>
         </div>
         <div class="enter-btn-box">
-            <a href="gamemode.html"><div class="enter-btn"></div></a>
+            <div class="enter-btn" onclick="startGame()"></div>
+            <!-- <a href="gamemode.html"><div class="enter-btn"></div></a> -->
         </div>
     </div> 
+
+    <script>
+function startGame() {
+    const player1 = document.querySelector('.player-1-name-text').value;
+    const player2 = document.querySelector('.player-2-name-text').value;
+
+    
+    localStorage.setItem("player1", player1);
+    localStorage.setItem("player2", player2);
+
+    
+    window.location.href = "gamemode.html";
+}
+</script>
+
 </body>
 </html>

@@ -34,7 +34,7 @@
   display: inline-flex;
 }
 .title{
- background-image: url("./img/Game-Mode.png");
+ background-image: url("./img/Game\ Mode.png");
   background-size: 50%;
   background-repeat: no-repeat;
    background-position: center; 

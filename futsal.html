@@ -5,28 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clash-Of-Boots</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="futsal.css" type="text/css">
 </head>
 
 <body>
+    
+    <div class="top-bar">
+    <span class="left-score"></span>
+    <span class="center-text"></span>
+    <span class="right-score"></span>
+</div>
     <div class="background">
+
+        <div class="right">
+            <div class="menu">
+                <i class="fa-solid fa-list "></i>
+                <div class="dropdown">
+                   
+                    <ul>
+                        <li id="reset">Restart</li>
+                        <a href ="start.html">Exit</a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div class="team-container">
+            
+
             <div class="team-1-box">
                 <div class="team-1"> </div>
                 <div class="team-red">
-                    <p class="player-name red-name">Player 1</p>
-                    <p class="score-count red-score">0</p>
+                    <p class="player-name red-name">player 1</p>
+                    <p class="score-count red-score">0|</p>
                 </div>
             </div>
             <div class="turn-board">
                 <div class="turn">
                     <p>0/30</p>
+
                 </div>
             </div>
             <div class="team-2-box">
                 <div class="team-blue">
-                    <p class="player-name blue-name">Player 2</p>
-                    <p class="score-count blue-score">0</p>
+                    <p class="player-name blue-name">player 2</p>
+                    <p class="score-count blue-score">|0</p>
                 </div>
                 <div class="team-2"> </div>
             </div>
@@ -37,7 +61,19 @@
         <a href="victory.html">victory</a>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
-    <script src="futsal.js"></script>
+    <script src="futsal.js"></script> 
+
+    <script>
+        const player1 = localStorage.getItem("player1") || "Player 1";
+        const player2 = localStorage.getItem("player2") || "Player 2";
+
+        document.querySelector(".red-name").innerText = player1;
+        document.querySelector(".blue-name").innerText = player2;
+
+
+</script>   
 </body>
+
+
 
 </html>
