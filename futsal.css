@@ -57,9 +57,6 @@
 .menu:active {
     transform: scale(0.9); 
 }
-.menu:hover .dropdown{
-    display:block;
-}
 
 
 .team-container {
@@ -254,5 +251,64 @@
     background-repeat: no-repeat;
     background-size: 1231px;
     background-position: center;
+}
+
+
+
+/* PAUSE OVERLAY */
+.pause-overlay {
+    position: fixed;
+    inset: 0; /*shortcut for top=0, right, bottom left =0*/
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pause-popup {
+    background: #1e2a3a;
+    padding: 30px 50px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+
+.pause-popup h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.pause-popup button,
+.pause-popup .exit-btn {
+    display: block;
+    width: 200px;
+    margin: 10px auto;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.pause-popup button {
+    background: #4da6ff;
+    color: black;
+}
+
+.pause-popup button:hover {
+    background: #7bbcff;
+}
+
+.exit-btn {
+    background: crimson;
+    color: white;
+    text-decoration: none;
+}
+
+.hidden {
+    display: none;
 }
 

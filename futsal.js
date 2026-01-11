@@ -1,6 +1,6 @@
 // Wait for the DOM to load
-document.addEventListener("DOMContentLoaded", function () {// event listner is used to run the function when the document is loaded.
-    var container = document.querySelector('.futsal'); //queryselector finds the html file using a css selector. this is method. it finds elements within the html file.
+document.addEventListener("DOMContentLoaded", function () { // so the domcontentloded is there because the js may run before the html file is fully loaded and this helps to wait the js to run only after the html file is loaded.
+    var container = document.querySelector('.futsal'); // here document is the built in object in js that represents the whole html file. queryselector is used to select the element with the class futsal., add event listner is method to listen the events, dom content loaded is the event of event listner.
     if (container) {
         var w = container.clientWidth;
         var h = container.clientHeight;
@@ -10,6 +10,28 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
             container.style.height = "600px";
         }
     }
+
+    const menuBtn = document.querySelector('.menu');
+const pauseOverlay = document.getElementById('pauseOverlay');
+const resumeBtn = document.getElementById('resumeBtn');
+const restartBtn = document.getElementById('restartBtn');
+
+menuBtn.addEventListener('click', () => {
+    pauseGame();
+    pauseOverlay.classList.remove('hidden');
+});
+
+resumeBtn.addEventListener('click', () => {
+    pauseOverlay.classList.add('hidden');
+    resumeGame();
+});
+
+restartBtn.addEventListener('click', () => {
+    pauseOverlay.classList.add('hidden');
+    resumeGame();
+    resetGame();
+});
+
 
     // Standard setup
     var Engine = Matter.Engine,
@@ -22,23 +44,17 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
         Body = Matter.Body;
 
     // --- GAME STATE ---
-<<<<<<< HEAD:Clash-Of-Boots/futsal.js
-    var gameState = {  //var is the keyword, others are the object that are created in js or also called property.
-        turn: 'red', // 'red' or 'blue' whose turn it is
-        isTurnActive: false, // true when objects are moving //when to move
-        score: { red: 0, blue: 0 }, //nested object  can i shoot now 
-=======
     var urlParams = new URLSearchParams(window.location.search);
     var targetGoals = parseInt(urlParams.get('goals')) || 3; 
 
-    var gameState = {
+    var gameState = { //gamestate ma chai u are tracking what u are doing ani function use hanesi matra game ma tyo kura haru implement hunxa.
         turn: 'red', // 'red' or 'blue'
         isTurnActive: false, // true when objects are moving
         score: { red: 0, blue: 0 },
->>>>>>> 2be9157bb4db3e4bf68d28400bbefd0a10878ced:futsal.js
         canShoot: true, // blocks input during movement
         turnCount: 0, // 1 to 30
-        maxGoals: targetGoals // goals needed to win
+        maxGoals: targetGoals,// goals needed to win
+        isPaused: false //pause state ra pause function bhanne hunxa, pause state le chai remembers that game is paused so that weird physics apply na hoss, ani pause function halna imp xa cause tesle chai runner lai stop garxa and start garxa.
     };
 
     // --- DOM ELEMENTS ---
@@ -50,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     var height = container.clientHeight;
 
     // --- PHYSICS SETUP ---
-    var engine = Engine.create(); // matter.js engine creation, this engine calculates movement, handles collison, updates positions every frame.... so matter. js le yo sabai kaam garirako xa.
+    var engine = Engine.create();
     engine.world.gravity.y = 0; // Top-down -> no gravity
 
     var render = Render.create({
@@ -230,11 +246,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     function createBall(x, y) {
         return Bodies.circle(x, y, BALL_RADIUS, {
             label: 'Ball',
-<<<<<<< HEAD:Clash-Of-Boots/futsal.js
-            restitution: 0.95,// bounciness of the ball, how much energy is conserved after the collision 
-=======
             restitution: 0.99,
->>>>>>> 2be9157bb4db3e4bf68d28400bbefd0a10878ced:futsal.js
             frictionAir: 0.008,
             friction: 0.001,
             density: 0.0008,
@@ -300,6 +312,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     render.canvas.addEventListener('touchmove', function (e) { handleMouseMove(e); });
 
     function handleInputStart(e) {
+        if (gameState.isPaused) return;
         if (!gameState.canShoot) return;
 
         var rect = render.canvas.getBoundingClientRect();
@@ -573,9 +586,13 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     }
 
     // --- INITIALIZATION ---
-    Render.run(render); 
+    Render.run(render); // when we put the things on window we can access the runner globally.
     var runner = Runner.create();
-    Runner.run(runner, engine);
+    Runner.run(runner, engine);// runner is matter.js object.
+
+    window.gameRunner = runner; // now it can be accessed globally for pausing and resuming.
+    window.gameEngine = engine;
+    window.gameState = gameState;
 
     updateTurnDisplay();
     resetPositions();
@@ -586,3 +603,15 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     });
 
 });
+
+function pauseGame() { //just putting the fucntion here so that it can be accessed globally.
+    if (gameState.isPaused) return;
+    Matter.Runner.stop(window.gameRunner);
+    window.gameState.isPaused = true;
+}
+
+function resumeGame() {
+    if (!gameState.isPaused) return;
+    Matter.Runner.run(window.gameRunner, window.gameEngine);
+    window.gameState.isPaused = false;
+}
