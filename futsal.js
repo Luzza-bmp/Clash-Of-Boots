@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
             container.style.height = "600px";
         }
     }
-    
+
     // Standard setup
     var Engine = Matter.Engine,
         Render = Matter.Render,
@@ -22,12 +22,23 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
         Body = Matter.Body;
 
     // --- GAME STATE ---
+<<<<<<< HEAD:Clash-Of-Boots/futsal.js
     var gameState = {  //var is the keyword, others are the object that are created in js or also called property.
         turn: 'red', // 'red' or 'blue' whose turn it is
         isTurnActive: false, // true when objects are moving //when to move
         score: { red: 0, blue: 0 }, //nested object  can i shoot now 
+=======
+    var urlParams = new URLSearchParams(window.location.search);
+    var targetGoals = parseInt(urlParams.get('goals')) || 3; 
+
+    var gameState = {
+        turn: 'red', // 'red' or 'blue'
+        isTurnActive: false, // true when objects are moving
+        score: { red: 0, blue: 0 },
+>>>>>>> 2be9157bb4db3e4bf68d28400bbefd0a10878ced:futsal.js
         canShoot: true, // blocks input during movement
-        turnCount: 0 // 1 to 30
+        turnCount: 0, // 1 to 30
+        maxGoals: targetGoals // goals needed to win
     };
 
     // --- DOM ELEMENTS ---
@@ -73,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     var fieldMarginX = width * 0.065;  // Left/right margins
     var fieldMarginY = height * 0.08;   // Top/bottom margins
     var goalDepthOffset = 25; // How far back the goal extends
-    
+
     var walls = [
         // Top wall (full length)
         Bodies.rectangle(width / 2, fieldMarginY + 20, width, WALL_THICKNESS, {
@@ -118,13 +129,13 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
             render: { fillStyle: 'transparent' }
         }),
         // Left goal top wall (roof of goal)
-        Bodies.rectangle(fieldMarginX - goalDepthOffset/2 + 70, height / 2 - GOAL_WIDTH / 2 - 20, goalDepthOffset + 70, WALL_THICKNESS, {
+        Bodies.rectangle(fieldMarginX - goalDepthOffset / 2 + 70, height / 2 - GOAL_WIDTH / 2 - 20, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'LeftGoalTop',
             render: { fillStyle: 'transparent' }
         }),
         // Left goal bottom wall (floor of goal)
-        Bodies.rectangle(fieldMarginX - goalDepthOffset/2 + 70, height / 2 + GOAL_WIDTH / 2 + 27, goalDepthOffset + 70, WALL_THICKNESS, {
+        Bodies.rectangle(fieldMarginX - goalDepthOffset / 2 + 70, height / 2 + GOAL_WIDTH / 2 + 27, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'LeftGoalBottom',
             render: { fillStyle: 'transparent' }
@@ -136,38 +147,38 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
             render: { fillStyle: 'transparent' }
         }),
         // Right goal top wall (roof of goal)
-        Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2 - 73, height / 2 - GOAL_WIDTH / 2 - 18, goalDepthOffset + 70, WALL_THICKNESS, {
+        Bodies.rectangle(width - fieldMarginX + goalDepthOffset / 2 - 73, height / 2 - GOAL_WIDTH / 2 - 18, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalTop',
             render: { fillStyle: 'transparent' }
         }),
         // Right goal bottom wall (floor of goal)
-        Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2 - 73, height / 2 + GOAL_WIDTH / 2 + 28, goalDepthOffset + 70, WALL_THICKNESS, {
+        Bodies.rectangle(width - fieldMarginX + goalDepthOffset / 2 - 73, height / 2 + GOAL_WIDTH / 2 + 28, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalBottom',
             render: { fillStyle: 'transparent' }
         }),
         // Extra corner walls to seal any gaps
         // Top-left corner
-        Bodies.rectangle(fieldMarginX/2 + 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
+        Bodies.rectangle(fieldMarginX / 2 + 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerTopLeft',
             render: { fillStyle: 'transparent' }
         }),
         // Top-right corner
-        Bodies.rectangle(width - fieldMarginX/2 - 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
+        Bodies.rectangle(width - fieldMarginX / 2 - 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerTopRight',
             render: { fillStyle: 'transparent' }
         }),
         // Bottom-left corner
-        Bodies.rectangle(fieldMarginX/2 + 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
+        Bodies.rectangle(fieldMarginX / 2 + 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerBottomLeft',
             render: { fillStyle: 'transparent' }
         }),
         // Bottom-right corner
-        Bodies.rectangle(width - fieldMarginX/2 - 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
+        Bodies.rectangle(width - fieldMarginX / 2 - 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerBottomRight',
             render: { fillStyle: 'transparent' }
@@ -196,9 +207,9 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     function createPlayer(x, y, team) {
         var isRed = team === 'red';
         var texture = isRed ? 'img/red-player.png' : 'img/blue-player.png';
-        var body = Bodies.circle(x, y, PLAYER_RADIUS , {
+        var body = Bodies.circle(x, y, PLAYER_RADIUS, {
             label: team + 'Player',
-            restitution: 0.9,
+            restitution: 0.99,
             frictionAir: 0.008,
             friction: 0.001,
             density: 0.002,
@@ -219,7 +230,11 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     function createBall(x, y) {
         return Bodies.circle(x, y, BALL_RADIUS, {
             label: 'Ball',
+<<<<<<< HEAD:Clash-Of-Boots/futsal.js
             restitution: 0.95,// bounciness of the ball, how much energy is conserved after the collision 
+=======
+            restitution: 0.99,
+>>>>>>> 2be9157bb4db3e4bf68d28400bbefd0a10878ced:futsal.js
             frictionAir: 0.008,
             friction: 0.001,
             density: 0.0008,
@@ -247,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
         var leftMidX = width * 0.3;
         var rightMidX = width * 0.7;
         var rightTeamX = width - fieldMarginX - 80;
-        
+
         // 5 Red Players (Left side) - positioned within field
         players.push(createPlayer(leftTeamX, height / 2, 'red'));  // Goalkeeper
         players.push(createPlayer(leftMidX - 50, height / 2 - 100, 'red'));  // Defender
@@ -276,7 +291,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     // --- INPUT HANDLING (Drag & Flick) ---
     var dragStart = null;
     var selectedBody = null;
-    var maxForce = 0.06;  // Adjusted for player size
+    var maxForce = 0.09;  // Adjusted for player size
     var currentMousePos = null; // Track mouse position for arrow drawing
 
     render.canvas.addEventListener('mousedown', function (e) { handleInputStart(e); });
@@ -307,12 +322,12 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
 
     function handleMouseMove(e) {
         if (!selectedBody || !dragStart) return;
-        
+
         e.preventDefault();
         var rect = render.canvas.getBoundingClientRect();
         var x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
         var y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-        
+
         currentMousePos = { x: x, y: y };
     }
 
@@ -335,21 +350,21 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
 
         var dx = dragStart.x - x;
         var dy = dragStart.y - y;
-        
+
         // Calculate the raw distance first
         var rawDistance = Math.sqrt(dx * dx + dy * dy);
-        
+
         // Scale force based on distance (0 to maxForce)
         var forceMagnitude = Math.min(rawDistance * 0.0006, maxForce);  // Scale up distance to force
-        
+
         // Create normalized direction vector
         if (rawDistance > 0.0005) {
             var normalizedDx = dx / rawDistance;
             var normalizedDy = dy / rawDistance;
-            
+
             // Apply force in the direction with calculated magnitude
             var forceVector = Vector.create(normalizedDx * forceMagnitude, normalizedDy * forceMagnitude);
-            
+
             Body.applyForce(selectedBody, selectedBody.position, forceVector);
             gameState.canShoot = false;
             gameState.isTurnActive = true;
@@ -364,22 +379,22 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     Events.on(render, 'afterRender', function () {
         if (selectedBody && dragStart && currentMousePos && gameState.canShoot) {
             var ctx = render.context;
-            
+
             // Calculate direction vector (from current mouse to player)
             var dx = dragStart.x - currentMousePos.x;
             var dy = dragStart.y - currentMousePos.y;
             var distance = Math.sqrt(dx * dx + dy * dy);
-            
+
             if (distance > 5) { // Only draw if dragged enough
                 // Calculate arrow end point (from player outward)
                 var arrowLength = Math.min(distance * 2, 150); // Scale arrow
                 var angle = Math.atan2(dy, dx);
                 var endX = selectedBody.position.x + Math.cos(angle) * arrowLength;
                 var endY = selectedBody.position.y + Math.sin(angle) * arrowLength;
-                
+
                 // Calculate power percentage
                 var power = Math.min(distance / 100, 1) * 100;
-                
+
                 // Draw arrow line
                 ctx.strokeStyle = selectedBody.team === 'red' ? '#ff0000' : '#0000ff';
                 ctx.lineWidth = 4;
@@ -387,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
                 ctx.moveTo(selectedBody.position.x, selectedBody.position.y);
                 ctx.lineTo(endX, endY);
                 ctx.stroke();
-                
+
                 // Draw arrowhead
                 var headLength = 15;
                 var headAngle = Math.PI / 6;
@@ -404,26 +419,26 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
                 );
                 ctx.closePath();
                 ctx.fill();
-                
+
                 // Draw power meter background
                 var meterWidth = 100;
                 var meterHeight = 15;
                 var meterX = selectedBody.position.x - meterWidth / 2;
                 var meterY = selectedBody.position.y - 50;
-                
+
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
                 ctx.fillRect(meterX, meterY, meterWidth, meterHeight);
-                
+
                 // Draw power meter fill
                 var powerColor = power < 33 ? '#00ff00' : power < 66 ? '#ffff00' : '#ff0000';
                 ctx.fillStyle = powerColor;
                 ctx.fillRect(meterX, meterY, (meterWidth * power) / 100, meterHeight);
-                
+
                 // Draw power meter border
                 ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(meterX, meterY, meterWidth, meterHeight);
-                
+
                 // Draw power percentage text
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 12px Arial';
@@ -478,6 +493,14 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
             scoreBlueEl.innerText = gameState.score.blue;
         }
 
+        if (gameState.score[scoringTeam] >= gameState.maxGoals) {
+            // Victory condition met
+            setTimeout(function () {
+                window.location.href = "victory.html?winner=" + scoringTeam;
+            }, 500);
+            return;
+        }
+
         gameState.turn = scoringTeam === 'red' ? 'blue' : 'red';
 
         setTimeout(function () {
@@ -500,7 +523,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
         var leftMidX = width * 0.3;
         var rightMidX = width * 0.7;
         var rightTeamX = width - fieldMarginX - 80;
-        
+
         // 5 Red Players (Left side) - positioned within field
         players.push(createPlayer(leftTeamX, height / 2, 'red'));  // Goalkeeper
         players.push(createPlayer(leftMidX - 50, height / 2 - 100, 'red'));  // Defender
@@ -550,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {// event listner is u
     }
 
     // --- INITIALIZATION ---
-    Render.run(render);
+    Render.run(render); 
     var runner = Runner.create();
     Runner.run(runner, engine);
 
