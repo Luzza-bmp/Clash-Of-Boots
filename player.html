@@ -6,40 +6,54 @@
     <title>Clash-Of-Boots</title>
     <link href="player.css" type="text/css" rel="stylesheet">
 </head>
+
 <body>
     <div class="img-bg">
         <div class="player-info">
             <div class="player-1">
                 <div class="player-1-title"></div>
                 <div class="player-1-logo"></div>
-                <div class="player-1-name"><input type="text" class="player-1-name-text" placeholder="Player 1"></div>
+                <div class="player-1-name">
+                    <input type="text" class="player-1-name-text" placeholder="Player 1">
+                </div>
             </div>
+
             <div class="img-vs"></div>
+
             <div class="player-2">
                 <div class="player-2-title"></div>
                 <div class="player-2-logo"></div>
-                <div class="player-2-name"><input type="text" class="player-2-name-text" placeholder="Player 2"></div>       
+                <div class="player-2-name">
+                    <input type="text" class="player-2-name-text" placeholder="Player 2">
+                </div>       
             </div>
         </div>
+
         <div class="enter-btn-box">
             <div class="enter-btn" onclick="startGame()"></div>
-            <!-- <a href="gamemode.html"><div class="enter-btn"></div></a> -->
         </div>
     </div> 
 
+    <!-- 🔊 Click Sound -->
+    <audio id="enterSound" src="audio/click.mp3" preload="auto"></audio>
+
     <script>
-function startGame() {
-    const player1 = document.querySelector('.player-1-name-text').value;
-    const player2 = document.querySelector('.player-2-name-text').value;
+        function startGame() {
+            const sound = document.getElementById("enterSound");
+            sound.currentTime = 0;
+            sound.play();
 
-    
-    localStorage.setItem("player1", player1);
-    localStorage.setItem("player2", player2);
+            const player1 = document.querySelector('.player-1-name-text').value;
+            const player2 = document.querySelector('.player-2-name-text').value;
 
-    
-    window.location.href = "gamemode.html";
-}
-</script>
+            localStorage.setItem("player1", player1);
+            localStorage.setItem("player2", player2);
 
+            // Delay so sound plays before page changes
+            setTimeout(() => {
+                window.location.href = "gamemode.html";
+            }, 800);
+        }
+    </script>
 </body>
 </html>

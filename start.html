@@ -4,22 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clash-Of-Boots</title>
-    <link href="start.css" rel="stylesheet" type="text/css">
+    <link href="start.css" rel="stylesheet">
 </head>
 <body>
-    <div class="background">
-        <div class="game-logo-box"><div class="game-logo"></div></div>
-        <div class="game-enter-box">
-            <a href="player.html" target="_parent">
-                <div class="game-enter"></div>
-            </a>
-        </div> 
+
+<div class="background">
+    <div class="game-logo-box">
+        <div class="game-logo"></div>
     </div>
 
-    
-   <audio controls>
-    <source src="Clash-Of-Boots/audio/click.wav" type="audio/wav">
+    <div class="game-enter-box" id="enterBox">
+        <div class="game-enter"></div>
+    </div>
+</div>
+
+<!-- Click Sound -->
+<audio id="clickSound" preload="auto">
+    <source src="audio/click.mp3" type="audio/mpeg">
 </audio>
+
+<!-- Hidden iframe to play persistent music -->
+<iframe src="music.html" style="display:none;" id="musicFrame"></iframe>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const enterBox = document.getElementById("enterBox");
+    const clickSound = document.getElementById("clickSound");
+
+    enterBox.addEventListener("click", () => {
+        clickSound.currentTime = 0;
+        clickSound.play().catch(() => {});
+
+        setTimeout(() => {
+            window.location.href = "player.html";
+        }, 600);
+    });
+});
+</script>
+
+</body>
+</html>
 
 
 </body>
