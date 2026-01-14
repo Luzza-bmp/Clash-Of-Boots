@@ -69,7 +69,7 @@ restartBtn.addEventListener('click', () => {
     var engine = Engine.create();
     engine.world.gravity.y = 0; // Top-down -> no gravity
 
-    var render = Render.create({
+    var render = Render.create({ // rendring means creating canvas and drawing and putting obejects using js.
         element: container,
         engine: engine,
         options: {
@@ -100,6 +100,21 @@ restartBtn.addEventListener('click', () => {
     var fieldMarginX = width * 0.065;  // Left/right margins
     var fieldMarginY = height * 0.08;   // Top/bottom margins
     var goalDepthOffset = 25; // How far back the goal extends
+
+    //creating powerups 
+   
+    var activePowerup = null;      // The powerup circle on the field (can be collected)
+    var collectedPowerup = null;   // The powerup a team has collected and can use
+   
+    var powerupTypes = [ //here the powerup types is an array that holds different powerup objects, we can add other powerups on this same array.
+    { 
+        id: 'speed',           // Unique identifier to check which powerup it is
+        name: 'Speed Boost',   // Display name for UI
+        color: '#ffff00',      // Yellow color for the powerup circle
+        icon: '⚡',            // Visual icon (optional)
+        duration: 3            // Lasts for 3 turns
+    }
+];
 
     var walls = [
         // Top wall (full length)
@@ -614,4 +629,126 @@ function resumeGame() {
     if (!gameState.isPaused) return;
     Matter.Runner.run(window.gameRunner, window.gameEngine);
     window.gameState.isPaused = false;
+}
+
+
+// POWERUP FUNCTIONS
+function spawnPowerup() {
+    if (activePowerup) return; // Don't spawn if one already exists
+    
+    // Random position in middle of field (40%-60% of width, 30%-70% of height)
+    var x = width * 0.4 + Math.random() * width * 0.2;
+    var y = height * 0.3 + Math.random() * height * 0.4;
+    
+    // Pick a random powerup type from the array
+    var type = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
+    
+    // Create a physical circle body using Matter.js
+    activePowerup = Bodies.circle(x, y, 25, {
+        isStatic: true,      // Doesn't move or fall
+        isSensor: true,      // Players can pass through it (ghost-like)
+        label: 'Powerup',    // Identifier for collision detection
+        render: {
+            fillStyle: type.color,      // Yellow for speed boost
+            strokeStyle: '#ffffff',     // White border
+            lineWidth: 3
+        }
+    });
+    
+    // Attach the powerup type info to the body
+    activePowerup.powerupType = type;
+    
+    // Add it to the physics world (now visible on screen)
+    Composite.add(engine.world, activePowerup);
+}
+
+function switchTurn() {
+    gameState.turn = gameState.turn === 'red' ? 'blue' : 'red';
+    gameState.turnCount++;
+    
+    // Every 3 or 4 turns, spawn a powerup
+    if (gameState.turnCount % 3 === 0 || gameState.turnCount % 4 === 0) {
+        spawnPowerup();
+    }
+    
+    updateTurnDisplay();
+}
+
+Events.on(engine, 'collisionStart', function (event) {
+    var pairs = event.pairs;  // All collisions that happened this frame
+    
+    for (var i = 0; i < pairs.length; i++) {
+        var bodyA = pairs[i].bodyA;
+        var bodyB = pairs[i].bodyB;
+        
+        // Check if a player touched the powerup
+        if (bodyA.label === 'Powerup' && bodyB.team) {
+            collectPowerup(bodyB.team, bodyA);  // bodyB is the player
+        } else if (bodyB.label === 'Powerup' && bodyA.team) {
+            collectPowerup(bodyA.team, bodyB);  // bodyA is the player
+        }
+    }
+});
+
+
+function collectPowerup(team, powerupBody) {
+    if (!activePowerup) return;  // Safety check
+    
+    // Remove the yellow circle from the field
+    Composite.remove(engine.world, powerupBody);
+    
+    // Give the powerup to the team
+    collectedPowerup = {
+        team: team,                              // 'red' or 'blue'
+        type: activePowerup.powerupType,         // { id: 'speed', name: '...', ... }
+        turnsLeft: activePowerup.powerupType.duration  // 3 turns
+    };
+    
+    activePowerup = null;  // No more powerup on field
+    
+    // Show notification
+    alert(team.toUpperCase() + " collected Speed Boost!");
+}
+
+var maxForce = 0.09;  // Normal shooting power
+
+function handleInputEnd(e) {
+    // ... all your existing drag calculation code ...
+    
+    // 🔥CHECK IF SPEED BOOST IS ACTIVE
+    if (collectedPowerup && 
+        collectedPowerup.team === gameState.turn &&  // Is it my team's turn?
+        collectedPowerup.type.id === 'speed') {      // Is it a speed boost?
+        
+        maxForce = 0.15;  // INCREASE POWER!
+    } else {
+        maxForce = 0.09;  // Normal power
+    }
+    
+    // Calculate force with new maxForce
+    var forceMagnitude = Math.min(rawDistance * 0.0006, maxForce);
+    
+    // Apply force to player
+    var forceVector = Vector.create(normalizedDx * forceMagnitude, normalizedDy * forceMagnitude);
+    Body.applyForce(selectedBody, selectedBody.position, forceVector);
+    
+    
+}
+
+function switchTurn() {
+    gameState.turn = gameState.turn === 'red' ? 'blue' : 'red';
+    gameState.turnCount++;
+    
+    // 🕐 DECREASE POWERUP TIMER
+    if (collectedPowerup && collectedPowerup.turnsLeft > 0) {
+        collectedPowerup.turnsLeft--;  // 3 → 2 → 1 → 0
+        
+        // When timer reaches 0, remove powerup
+        if (collectedPowerup.turnsLeft === 0) {
+            collectedPowerup = null;  // Speed boost gone!
+            maxForce = 0.09;          // Back to normal
+        }
+    }
+    
+    updateTurnDisplay();
 }
