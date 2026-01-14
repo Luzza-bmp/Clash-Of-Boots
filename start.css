@@ -46,3 +46,34 @@
     transition: 1s;
     transform: translateY(20px);
 }
+/* Full screen popup overlay */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: url('./kicking gif.gif') no-repeat center center;
+    background-size: contain; /* or cover depending on your image */
+    transform: scale(0);
+    z-index: 9999;
+    opacity: 0;
+    transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+/* When popup is active */
+.popup-overlay.show {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Start button effect */
+.game-enter {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.game-enter:hover {
+    transform: scale(1.05);
+}
+
+.game-enter:active {
+    transform: scale(0.95);
+}

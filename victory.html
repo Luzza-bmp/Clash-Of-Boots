@@ -7,18 +7,68 @@
     <link rel="stylesheet" href="victory.css" type="text/css">
 </head>
 <body>
+    <div class="dim-overlay"></div>
+<h1 id="winner-text"></h1>
+<div class="winner-popup">
+    <img src="./popper.gif" alt="Winner Sticker">
+</div>
+
+
     <div class="background">
         <div class="victory-box">
             <div class="victory"></div>
         </div>
         <div class="options-container">
             <div class="play-box">
-                <div class="play"></div>
+                <div class="play" id="playBtn"></div>
             </div>
             <div class="exit-box">
-                <div class="exit"></div>
+                <div class="exit" id="exitBtn"></div>
             </div>
         </div>
     </div>
+    
+
+
+ <script>
+    // PLAY AGAIN (same players)
+    document.getElementById("playBtn").addEventListener("click", () => {
+        // Only remove winner, keep players
+        localStorage.removeItem("winnerName");
+
+        // Go directly to futsal page
+        window.location.href = "futsal.html";
+    });
+
+    // EXIT TO START (reset everything)
+    document.getElementById("exitBtn").addEventListener("click", () => {
+        // Clear all saved data
+        localStorage.clear();
+
+        // Go to start page
+        window.location.href = "start.html";
+    });
+</script>
+<script>
+    const winnerName = localStorage.getItem("winnerName") || "Winner";
+
+    // put winner name wherever you want
+    // example: animated popup text
+    const title = document.createElement("h1");
+    title.innerText = winnerName + " WINS!";
+    title.style.position = "fixed";
+    title.style.top = "45%";
+    title.style.left = "50%";
+    title.style.transform = "translate(-50%, -50%) scale(0)";
+    title.style.fontSize = "70px";
+    title.style.color = "black";
+    title.style.textShadow = "0 0 20px orange";
+    title.style.animation = "popWinner 0.9s ease-out forwards";
+
+    document.body.appendChild(title);
+</script>
+
+
+   
 </body>
 </html>

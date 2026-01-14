@@ -1,3 +1,4 @@
+start.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,11 +11,25 @@
     <div class="background">
         <div class="game-logo-box"><div class="game-logo"></div></div>
         <div class="game-enter-box">
-            <a href="player.html" target="_parent">
-                <div class="game-enter"></div>
-            </a>
+            <div class="game-enter" onclick="startGame()"></div>
         </div>
     </div>
+    <div class="popup-overlay" id="popup">
+        
+    </div>
+
+    <script>
+        function startGame() {
+            const popup = document.getElementById("popup");
+            popup.classList.add("show"); // trigger animation
+
+            // go to next page after animation
+            setTimeout(() => {
+                window.location.href = "player.html"; // change to your next page
+            }, 1000); // 1 second delay for animation
+        }
+    </script>
+
 
     
    <audio controls>

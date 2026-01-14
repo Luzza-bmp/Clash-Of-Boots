@@ -483,12 +483,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (gameState.score[scoringTeam] >= gameState.maxGoals) {
-            // Victory condition met
-            setTimeout(function () {
-                window.location.href = "victory.html?winner=" + scoringTeam;
-            }, 500);
-            return;
-        }
+
+    // 🔥 SAVE WINNER TEAM
+    localStorage.setItem("winnerTeam", scoringTeam);
+
+    // 🔥 GET PLAYER NAMES (already saved earlier by you)
+    const player1 = localStorage.getItem("player1") || "Player 1";
+    const player2 = localStorage.getItem("player2") || "Player 2";
+
+    // 🔥 SAVE WINNER NAME
+    if (scoringTeam === "red") {
+        localStorage.setItem("winnerName", player1);
+    } else {
+        localStorage.setItem("winnerName", player2);
+    }
+
+    // 🔥 GO TO VICTORY PAGE
+    setTimeout(function () {
+        window.location.href = "victory.html";
+    }, 500);
+
+    return;
+}
+
 
         gameState.turn = scoringTeam === 'red' ? 'blue' : 'red';
 
