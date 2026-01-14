@@ -1,6 +1,18 @@
 // Wait for the DOM to load
-document.addEventListener("DOMContentLoaded", function () { // so the domcontentloded is there because the js may run before the html file is fully loaded and this helps to wait the js to run only after the html file is loaded.
-    var container = document.querySelector('.futsal'); // here document is the built in object in js that represents the whole html file. queryselector is used to select the element with the class futsal., add event listner is method to listen the events, dom content loaded is the event of event listner.
+let gameState = null;
+
+function initFutsal(goals) {
+    // Clean up previous game instance
+    if (window.gameRunner) {
+        Matter.Runner.stop(window.gameRunner);
+        Matter.World.clear(window.gameEngine.world);
+        Matter.Engine.clear(window.gameEngine);
+    }
+
+    window.selectedGoals = goals;
+
+    // Check container size
+    var container = document.querySelector('.futsal');
     if (container) {
         var w = container.clientWidth;
         var h = container.clientHeight;
@@ -11,27 +23,53 @@ document.addEventListener("DOMContentLoaded", function () { // so the domcontent
         }
     }
 
+    // Setup pause menu (only once)
     const menuBtn = document.querySelector('.menu');
-const pauseOverlay = document.getElementById('pauseOverlay');
-const resumeBtn = document.getElementById('resumeBtn');
-const restartBtn = document.getElementById('restartBtn');
+    const pauseOverlay = document.getElementById('pauseOverlay');
+    const resumeBtn = document.getElementById('resumeBtn');
+    const restartBtn = document.getElementById('restartBtn');
 
-menuBtn.addEventListener('click', () => {
-    pauseGame();
-    pauseOverlay.classList.remove('hidden');
-});
+    if (menuBtn && !menuBtn.dataset.bound) {
+        menuBtn.dataset.bound = "true";
 
-resumeBtn.addEventListener('click', () => {
-    pauseOverlay.classList.add('hidden');
-    resumeGame();
-});
+        menuBtn.onclick = () => {
+            // Play click sound
+            if (typeof SoundManager !== 'undefined') {
+                SoundManager.play('click');
+            }
+            pauseGame();
+            pauseOverlay.classList.remove('hidden');
+        };
 
-restartBtn.addEventListener('click', () => {
-    pauseOverlay.classList.add('hidden');
-    resumeGame();
-    resetGame();
-});
+        resumeBtn.onclick = () => {
+            // Play click sound
+            if (typeof SoundManager !== 'undefined') {
+                SoundManager.play('click');
+            }
+            pauseOverlay.classList.add('hidden');
+            resumeGame();
+        };
 
+        restartBtn.onclick = () => {
+            // Play click sound
+            if (typeof SoundManager !== 'undefined') {
+                SoundManager.play('click');
+            }
+            pauseOverlay.classList.add('hidden');
+            resumeGame();
+            resetGame();
+        };
+    }
+
+    // Display player names
+    const player1Name = localStorage.getItem("player1") || "Player 1";
+    const player2Name = localStorage.getItem("player2") || "Player 2";
+    
+    const redNameEl = document.querySelector('.red-name');
+    const blueNameEl = document.querySelector('.blue-name');
+    
+    if (redNameEl) redNameEl.innerText = player1Name;
+    if (blueNameEl) blueNameEl.innerText = player2Name;
 
     // Standard setup
     var Engine = Matter.Engine,
@@ -44,30 +82,29 @@ restartBtn.addEventListener('click', () => {
         Body = Matter.Body;
 
     // --- GAME STATE ---
-    var urlParams = new URLSearchParams(window.location.search);
-    var targetGoals = parseInt(urlParams.get('goals')) || 3; 
+    var targetGoals = window.selectedGoals || 3;
 
-    var gameState = { //gamestate ma chai u are tracking what u are doing ani function use hanesi matra game ma tyo kura haru implement hunxa.
-        turn: 'red', // 'red' or 'blue'
-        isTurnActive: false, // true when objects are moving
+    gameState = {
+        turn: 'red',
+        isTurnActive: false,
         score: { red: 0, blue: 0 },
-        canShoot: true, // blocks input during movement
-        turnCount: 0, // 1 to 30
-        maxGoals: targetGoals,// goals needed to win
-        isPaused: false //pause state ra pause function bhanne hunxa, pause state le chai remembers that game is paused so that weird physics apply na hoss, ani pause function halna imp xa cause tesle chai runner lai stop garxa and start garxa.
+        canShoot: true,
+        turnCount: 0,
+        maxGoals: targetGoals,
+        isPaused: false
     };
 
     // --- DOM ELEMENTS ---
-    var scoreRedEl = document.querySelector('.red-score');
-    var scoreBlueEl = document.querySelector('.blue-score');
+    var scoreRedEls = document.querySelectorAll('.red-score');
+    var scoreBlueEls = document.querySelectorAll('.blue-score');
     var turnIndicator = document.querySelector('.turn p');
-    var container = document.querySelector('.futsal');
     var width = container.clientWidth;
     var height = container.clientHeight;
 
     // --- PHYSICS SETUP ---
     var engine = Engine.create();
-    engine.world.gravity.y = 0; // Top-down -> no gravity
+    engine.world.gravity.y = 0;
+    engine.world.gravity.x = 0;
 
     var render = Render.create({
         element: container,
@@ -83,146 +120,85 @@ restartBtn.addEventListener('click', () => {
 
     // --- ENTITY CONFIG ---
     var WALL_THICKNESS = 10;
-    var PLAYER_RADIUS = 28;  // Increased player size
+    var PLAYER_RADIUS = 28;
     var BALL_RADIUS = 20;
-    var GOAL_WIDTH = 120;  // Match goal post size in image
+    var GOAL_WIDTH = 120;
     var GOAL_DEPTH = 40;
 
-    // DECLARE PLAYERS AND BALL ARRAYS
     var players = [];
     var ball = null;
 
-    // Groups for collision filtering
-    var defaultCategory = 0x0001;
+    // Calculate field boundaries
+    var fieldMarginX = width * 0.065;
+    var fieldMarginY = height * 0.08;
+    var goalDepthOffset = 25;
 
     // --- CREATE WALLS ---
-    // Calculate playable field boundaries (matching the white lines in image)
-    var fieldMarginX = width * 0.065;  // Left/right margins
-    var fieldMarginY = height * 0.08;   // Top/bottom margins
-    var goalDepthOffset = 25; // How far back the goal extends
-
     var walls = [
-        // Top wall (full length)
         Bodies.rectangle(width / 2, fieldMarginY + 20, width, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'WallTop',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'WallTop', render: { fillStyle: 'transparent' }
         }),
-        // Bottom wall (full length)
         Bodies.rectangle(width / 2, height - fieldMarginY - 13, width, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'WallBottom',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'WallBottom', render: { fillStyle: 'transparent' }
         }),
-        // Left wall (top part - above goal)
         Bodies.rectangle(fieldMarginX + 102, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
-            isStatic: true,
-            label: 'WallLeftTop',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'WallLeftTop', render: { fillStyle: 'transparent' }
         }),
-        // Left wall (bottom part - below goal)
         Bodies.rectangle(fieldMarginX + 102, height / 2 + GOAL_WIDTH / 2 + 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 - 10, {
-            isStatic: true,
-            label: 'WallLeftBottom',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'WallLeftBottom', render: { fillStyle: 'transparent' }
         }),
-        // Right wall (top part - above goal)
         Bodies.rectangle(width - fieldMarginX - 103, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
-            isStatic: true,
-            label: 'WallRightTop',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'WallRightTop', render: { fillStyle: 'transparent' }
         }),
-        // Right wall (bottom part - below goal)
         Bodies.rectangle(width - fieldMarginX - 103, height / 2 + GOAL_WIDTH / 2 + 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 - 12, {
-            isStatic: true,
-            label: 'WallRightBottom',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'WallRightBottom', render: { fillStyle: 'transparent' }
         }),
-        // Left goal back wall (at the back of goal area)
         Bodies.rectangle(fieldMarginX - goalDepthOffset + 40, (height / 2) + 5, WALL_THICKNESS, GOAL_WIDTH + 50, {
-            isStatic: true,
-            label: 'LeftGoalBack',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'LeftGoalBack', render: { fillStyle: 'transparent' }
         }),
-        // Left goal top wall (roof of goal)
         Bodies.rectangle(fieldMarginX - goalDepthOffset / 2 + 70, height / 2 - GOAL_WIDTH / 2 - 20, goalDepthOffset + 70, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'LeftGoalTop',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'LeftGoalTop', render: { fillStyle: 'transparent' }
         }),
-        // Left goal bottom wall (floor of goal)
         Bodies.rectangle(fieldMarginX - goalDepthOffset / 2 + 70, height / 2 + GOAL_WIDTH / 2 + 27, goalDepthOffset + 70, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'LeftGoalBottom',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'LeftGoalBottom', render: { fillStyle: 'transparent' }
         }),
-        // Right goal back wall (at the back of goal area)
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset - 40, height / 2 + 5, WALL_THICKNESS, GOAL_WIDTH + 60, {
-            isStatic: true,
-            label: 'RightGoalBack',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'RightGoalBack', render: { fillStyle: 'transparent' }
         }),
-        // Right goal top wall (roof of goal)
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset / 2 - 73, height / 2 - GOAL_WIDTH / 2 - 18, goalDepthOffset + 70, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'RightGoalTop',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'RightGoalTop', render: { fillStyle: 'transparent' }
         }),
-        // Right goal bottom wall (floor of goal)
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset / 2 - 73, height / 2 + GOAL_WIDTH / 2 + 28, goalDepthOffset + 70, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'RightGoalBottom',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'RightGoalBottom', render: { fillStyle: 'transparent' }
         }),
-        // Extra corner walls to seal any gaps
-        // Top-left corner
         Bodies.rectangle(fieldMarginX / 2 + 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'CornerTopLeft',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'CornerTopLeft', render: { fillStyle: 'transparent' }
         }),
-        // Top-right corner
         Bodies.rectangle(width - fieldMarginX / 2 - 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'CornerTopRight',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'CornerTopRight', render: { fillStyle: 'transparent' }
         }),
-        // Bottom-left corner
         Bodies.rectangle(fieldMarginX / 2 + 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'CornerBottomLeft',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'CornerBottomLeft', render: { fillStyle: 'transparent' }
         }),
-        // Bottom-right corner
         Bodies.rectangle(width - fieldMarginX / 2 - 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
-            isStatic: true,
-            label: 'CornerBottomRight',
-            render: { fillStyle: 'transparent' }
+            isStatic: true, label: 'CornerBottomRight', render: { fillStyle: 'transparent' }
         })
     ];
 
-    // --- CREATE GOALS (as sensors) ---
+    // --- CREATE GOALS ---
     var goalLeft = Bodies.rectangle(fieldMarginX + 55, height / 2 + 5, GOAL_DEPTH + 20, GOAL_WIDTH + 16, {
-        isStatic: true,
-        isSensor: true,
-        label: 'GoalLeft',
-        render: { fillStyle: 'transparent' }
+        isStatic: true, isSensor: true, label: 'GoalLeft', render: { fillStyle: 'transparent' }
     });
 
     var goalRight = Bodies.rectangle(width - fieldMarginX - 55, height / 2 + 5, GOAL_DEPTH + 20, GOAL_WIDTH + 16, {
-        isStatic: true,
-        isSensor: true,
-        label: 'GoalRight',
-        render: { fillStyle: 'transparent' }
+        isStatic: true, isSensor: true, label: 'GoalRight', render: { fillStyle: 'transparent' }
     });
 
-    // Add walls and goals to world
     Composite.add(engine.world, [...walls, goalLeft, goalRight]);
 
-    // --- BODIES CREATION ---
+    // --- PLAYER & BALL CREATION ---
     function createPlayer(x, y, team) {
-        var isRed = team === 'red';
-        var texture = isRed ? 'img/red-player.png' : 'img/blue-player.png';
+        var texture = team === 'red' ? 'img/red-player.png' : 'img/blue-player.png';
         var body = Bodies.circle(x, y, PLAYER_RADIUS, {
             label: team + 'Player',
             restitution: 0.99,
@@ -230,12 +206,7 @@ restartBtn.addEventListener('click', () => {
             friction: 0.001,
             density: 0.002,
             render: {
-                sprite: {
-                    texture: texture,
-                    xScale: 0.22,  // Increased sprite size
-                    yScale: 0.22
-                },
-                // Fallback color in case image doesn't load
+                sprite: { texture: texture, xScale: 0.22, yScale: 0.22 },
                 fillStyle: team === 'red' ? '#ff0000' : '#0000ff'
             }
         });
@@ -250,70 +221,70 @@ restartBtn.addEventListener('click', () => {
             frictionAir: 0.008,
             friction: 0.001,
             density: 0.0008,
-            render: {
-                fillStyle: '#ffffff',
-                strokeStyle: '#000000',
-                lineWidth: 2
-            }
+            render: { fillStyle: '#ffffff', strokeStyle: '#000000', lineWidth: 2 }
         });
     }
 
-    // --- FORMATION RESET ---
-    function resetPositions(concedingTeam) {
-        // Remove existing dynamic bodies
-        if (players.length > 0) {
-            Composite.remove(engine.world, players);
+    // --- RESET POSITIONS ---
+    function resetPositions() {
+        if (window.gameRunner) {
+            Matter.Runner.stop(window.gameRunner);
         }
-        if (ball) {
-            Composite.remove(engine.world, ball);
-        }
+
+        if (players.length > 0) Composite.remove(engine.world, players);
+        if (ball) Composite.remove(engine.world, ball);
         players = [];
 
-        // Calculate positions within field boundaries
         var leftTeamX = fieldMarginX + 80;
         var leftMidX = width * 0.3;
         var rightMidX = width * 0.7;
         var rightTeamX = width - fieldMarginX - 80;
 
-        // 5 Red Players (Left side) - positioned within field
-        players.push(createPlayer(leftTeamX, height / 2, 'red'));  // Goalkeeper
-        players.push(createPlayer(leftMidX - 50, height / 2 - 100, 'red'));  // Defender
-        players.push(createPlayer(leftMidX - 50, height / 2 + 100, 'red'));  // Defender
-        players.push(createPlayer(leftMidX + 80, height / 2 - 60, 'red'));  // Forward
-        players.push(createPlayer(leftMidX + 80, height / 2 + 60, 'red'));  // Forward
+        players.push(createPlayer(leftTeamX, height / 2, 'red'));
+        players.push(createPlayer(leftMidX - 50, height / 2 - 100, 'red'));
+        players.push(createPlayer(leftMidX - 50, height / 2 + 100, 'red'));
+        players.push(createPlayer(leftMidX + 80, height / 2 - 60, 'red'));
+        players.push(createPlayer(leftMidX + 80, height / 2 + 60, 'red'));
 
-        // 5 Blue Players (Right side) - positioned within field
-        players.push(createPlayer(rightTeamX, height / 2, 'blue'));  // Goalkeeper
-        players.push(createPlayer(rightMidX + 50, height / 2 - 100, 'blue'));  // Defender
-        players.push(createPlayer(rightMidX + 50, height / 2 + 100, 'blue'));  // Defender
-        players.push(createPlayer(rightMidX - 80, height / 2 - 60, 'blue'));  // Forward
-        players.push(createPlayer(rightMidX - 80, height / 2 + 60, 'blue'));  // Forward
+        players.push(createPlayer(rightTeamX, height / 2, 'blue'));
+        players.push(createPlayer(rightMidX + 50, height / 2 - 100, 'blue'));
+        players.push(createPlayer(rightMidX + 50, height / 2 + 100, 'blue'));
+        players.push(createPlayer(rightMidX - 80, height / 2 - 60, 'blue'));
+        players.push(createPlayer(rightMidX - 80, height / 2 + 60, 'blue'));
 
-        // Ball at center
         ball = createBall(width / 2, height / 2);
-
         Composite.add(engine.world, [...players, ball]);
 
-        // Reset state
+        var allBodies = Composite.allBodies(engine.world);
+        for (var i = 0; i < allBodies.length; i++) {
+            Body.setVelocity(allBodies[i], { x: 0, y: 0 });
+            Body.setAngularVelocity(allBodies[i], 0);
+        }
+
+        if (window.gameRunner && !gameState.isPaused) {
+            Matter.Runner.run(window.gameRunner, window.gameEngine);
+        }
+
         gameState.isTurnActive = false;
         gameState.canShoot = true;
         updateTurnDisplay();
     }
 
-    // --- INPUT HANDLING (Drag & Flick) ---
+    // --- INPUT HANDLING ---
     var dragStart = null;
     var selectedBody = null;
-    var maxForce = 0.09;  // Adjusted for player size
-    var currentMousePos = null; // Track mouse position for arrow drawing
+    var maxForce = 0.09;
+    var currentMousePos = null;
 
-    render.canvas.addEventListener('mousedown', function (e) { handleInputStart(e); });
-    render.canvas.addEventListener('touchstart', function (e) { handleInputStart(e); });
-    render.canvas.addEventListener('mousemove', function (e) { handleMouseMove(e); });
-    render.canvas.addEventListener('touchmove', function (e) { handleMouseMove(e); });
+    render.canvas.addEventListener('mousedown', handleInputStart);
+    render.canvas.addEventListener('touchstart', handleInputStart);
+    render.canvas.addEventListener('mousemove', handleMouseMove);
+    render.canvas.addEventListener('touchmove', handleMouseMove);
+    render.canvas.addEventListener('mouseup', handleInputEnd);
+    render.canvas.addEventListener('touchend', handleInputEnd);
 
     function handleInputStart(e) {
-        if (gameState.isPaused) return;
-        if (!gameState.canShoot) return;
+        if (gameState.isPaused || !gameState.canShoot) return;
 
         var rect = render.canvas.getBoundingClientRect();
         var x = (e.clientX || e.touches[0].clientX) - rect.left;
@@ -335,50 +306,38 @@ restartBtn.addEventListener('click', () => {
 
     function handleMouseMove(e) {
         if (!selectedBody || !dragStart) return;
-
         e.preventDefault();
         var rect = render.canvas.getBoundingClientRect();
         var x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
         var y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-
         currentMousePos = { x: x, y: y };
     }
-
-    render.canvas.addEventListener('mouseup', function (e) { handleInputEnd(e); });
-    render.canvas.addEventListener('touchend', function (e) { handleInputEnd(e); });
 
     function handleInputEnd(e) {
         if (!selectedBody || !dragStart) return;
 
         var rect = render.canvas.getBoundingClientRect();
-        var clientX = e.clientX;
-        var clientY = e.clientY;
-        if (!clientX && e.changedTouches) {
-            clientX = e.changedTouches[0].clientX;
-            clientY = e.changedTouches[0].clientY;
-        }
-
+        var clientX = e.clientX || (e.changedTouches && e.changedTouches[0].clientX);
+        var clientY = e.clientY || (e.changedTouches && e.changedTouches[0].clientY);
         var x = clientX - rect.left;
         var y = clientY - rect.top;
 
         var dx = dragStart.x - x;
         var dy = dragStart.y - y;
-
-        // Calculate the raw distance first
         var rawDistance = Math.sqrt(dx * dx + dy * dy);
+        var forceMagnitude = Math.min(rawDistance * 0.0006, maxForce);
 
-        // Scale force based on distance (0 to maxForce)
-        var forceMagnitude = Math.min(rawDistance * 0.0006, maxForce);  // Scale up distance to force
-
-        // Create normalized direction vector
         if (rawDistance > 0.0005) {
             var normalizedDx = dx / rawDistance;
             var normalizedDy = dy / rawDistance;
-
-            // Apply force in the direction with calculated magnitude
             var forceVector = Vector.create(normalizedDx * forceMagnitude, normalizedDy * forceMagnitude);
-
             Body.applyForce(selectedBody, selectedBody.position, forceVector);
+            
+            // Play kick sound
+            if (typeof SoundManager !== 'undefined') {
+                SoundManager.play('kick');
+            }
+            
             gameState.canShoot = false;
             gameState.isTurnActive = true;
         }
@@ -388,27 +347,21 @@ restartBtn.addEventListener('click', () => {
         currentMousePos = null;
     }
 
-    // Draw Aim Arrow and Power Meter
+    // Draw aim arrow
     Events.on(render, 'afterRender', function () {
         if (selectedBody && dragStart && currentMousePos && gameState.canShoot) {
             var ctx = render.context;
-
-            // Calculate direction vector (from current mouse to player)
             var dx = dragStart.x - currentMousePos.x;
             var dy = dragStart.y - currentMousePos.y;
             var distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance > 5) { // Only draw if dragged enough
-                // Calculate arrow end point (from player outward)
-                var arrowLength = Math.min(distance * 2, 150); // Scale arrow
+            if (distance > 5) {
+                var arrowLength = Math.min(distance * 2, 150);
                 var angle = Math.atan2(dy, dx);
                 var endX = selectedBody.position.x + Math.cos(angle) * arrowLength;
                 var endY = selectedBody.position.y + Math.sin(angle) * arrowLength;
-
-                // Calculate power percentage
                 var power = Math.min(distance / 100, 1) * 100;
 
-                // Draw arrow line
                 ctx.strokeStyle = selectedBody.team === 'red' ? '#ff0000' : '#0000ff';
                 ctx.lineWidth = 4;
                 ctx.beginPath();
@@ -416,24 +369,16 @@ restartBtn.addEventListener('click', () => {
                 ctx.lineTo(endX, endY);
                 ctx.stroke();
 
-                // Draw arrowhead
                 var headLength = 15;
                 var headAngle = Math.PI / 6;
                 ctx.fillStyle = selectedBody.team === 'red' ? '#ff0000' : '#0000ff';
                 ctx.beginPath();
                 ctx.moveTo(endX, endY);
-                ctx.lineTo(
-                    endX - headLength * Math.cos(angle - headAngle),
-                    endY - headLength * Math.sin(angle - headAngle)
-                );
-                ctx.lineTo(
-                    endX - headLength * Math.cos(angle + headAngle),
-                    endY - headLength * Math.sin(angle + headAngle)
-                );
+                ctx.lineTo(endX - headLength * Math.cos(angle - headAngle), endY - headLength * Math.sin(angle - headAngle));
+                ctx.lineTo(endX - headLength * Math.cos(angle + headAngle), endY - headLength * Math.sin(angle + headAngle));
                 ctx.closePath();
                 ctx.fill();
 
-                // Draw power meter background
                 var meterWidth = 100;
                 var meterHeight = 15;
                 var meterX = selectedBody.position.x - meterWidth / 2;
@@ -442,17 +387,14 @@ restartBtn.addEventListener('click', () => {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
                 ctx.fillRect(meterX, meterY, meterWidth, meterHeight);
 
-                // Draw power meter fill
                 var powerColor = power < 33 ? '#00ff00' : power < 66 ? '#ffff00' : '#ff0000';
                 ctx.fillStyle = powerColor;
                 ctx.fillRect(meterX, meterY, (meterWidth * power) / 100, meterHeight);
 
-                // Draw power meter border
                 ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(meterX, meterY, meterWidth, meterHeight);
 
-                // Draw power percentage text
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
@@ -461,8 +403,11 @@ restartBtn.addEventListener('click', () => {
         }
     });
 
-    // --- GAME LOOP LOGIC ---
+    // --- GAME LOOP ---
     Events.on(engine, 'beforeUpdate', function () {
+        engine.world.gravity.y = 0;
+        engine.world.gravity.x = 0;
+        
         if (gameState.isTurnActive) {
             var totalEnergy = 0;
             var bodies = Composite.allBodies(engine.world);
@@ -498,65 +443,72 @@ restartBtn.addEventListener('click', () => {
     });
 
     function handleGoal(scoringTeam) {
-        gameState.score[scoringTeam]++;
-
-        if (scoringTeam === 'red') {
-            scoreRedEl.innerText = gameState.score.red;
-        } else {
-            scoreBlueEl.innerText = gameState.score.blue;
+        // Play goal sound
+        if (typeof SoundManager !== 'undefined') {
+            SoundManager.play('goal');
         }
+        
+        gameState.score[scoringTeam]++;
+        scoreRedEls.forEach(el => el.innerText = gameState.score.red);
+        scoreBlueEls.forEach(el => el.innerText = gameState.score.blue);
 
         if (gameState.score[scoringTeam] >= gameState.maxGoals) {
-            // Victory condition met
             setTimeout(function () {
-                window.location.href = "victory.html?winner=" + scoringTeam;
+                if (window.gameRunner) {
+                    Matter.Runner.stop(window.gameRunner);
+                }
+                endGame(scoringTeam);
             }, 500);
             return;
         }
 
         gameState.turn = scoringTeam === 'red' ? 'blue' : 'red';
-
-        setTimeout(function () {
+        gameState.canShoot = false;
+        
+        setTimeout(function() {
             resetPositions();
         }, 1500);
     }
 
-    function resetGame(concedingTeam) {
-        // Remove existing dynamic bodies
-        if (players.length > 0) {
-            Composite.remove(engine.world, players);
+    function resetGame() {
+        if (window.gameRunner) {
+            Matter.Runner.stop(window.gameRunner);
         }
-        if (ball) {
-            Composite.remove(engine.world, ball);
-        }
+
+        if (players.length > 0) Composite.remove(engine.world, players);
+        if (ball) Composite.remove(engine.world, ball);
         players = [];
 
-        // Calculate positions within field boundaries
         var leftTeamX = fieldMarginX + 80;
         var leftMidX = width * 0.3;
         var rightMidX = width * 0.7;
         var rightTeamX = width - fieldMarginX - 80;
 
-        // 5 Red Players (Left side) - positioned within field
-        players.push(createPlayer(leftTeamX, height / 2, 'red'));  // Goalkeeper
-        players.push(createPlayer(leftMidX - 50, height / 2 - 100, 'red'));  // Defender
-        players.push(createPlayer(leftMidX - 50, height / 2 + 100, 'red'));  // Defender
-        players.push(createPlayer(leftMidX + 80, height / 2 - 60, 'red'));  // Forward
-        players.push(createPlayer(leftMidX + 80, height / 2 + 60, 'red'));  // Forward
+        players.push(createPlayer(leftTeamX, height / 2, 'red'));
+        players.push(createPlayer(leftMidX - 50, height / 2 - 100, 'red'));
+        players.push(createPlayer(leftMidX - 50, height / 2 + 100, 'red'));
+        players.push(createPlayer(leftMidX + 80, height / 2 - 60, 'red'));
+        players.push(createPlayer(leftMidX + 80, height / 2 + 60, 'red'));
 
-        // 5 Blue Players (Right side) - positioned within field
-        players.push(createPlayer(rightTeamX, height / 2, 'blue'));  // Goalkeeper
-        players.push(createPlayer(rightMidX + 50, height / 2 - 100, 'blue'));  // Defender
-        players.push(createPlayer(rightMidX + 50, height / 2 + 100, 'blue'));  // Defender
-        players.push(createPlayer(rightMidX - 80, height / 2 - 60, 'blue'));  // Forward
-        players.push(createPlayer(rightMidX - 80, height / 2 + 60, 'blue'));  // Forward
+        players.push(createPlayer(rightTeamX, height / 2, 'blue'));
+        players.push(createPlayer(rightMidX + 50, height / 2 - 100, 'blue'));
+        players.push(createPlayer(rightMidX + 50, height / 2 + 100, 'blue'));
+        players.push(createPlayer(rightMidX - 80, height / 2 - 60, 'blue'));
+        players.push(createPlayer(rightMidX - 80, height / 2 + 60, 'blue'));
 
-        // Ball at center
         ball = createBall(width / 2, height / 2);
-
         Composite.add(engine.world, [...players, ball]);
 
-        // Reset state
+        var allBodies = Composite.allBodies(engine.world);
+        for (var i = 0; i < allBodies.length; i++) {
+            Body.setVelocity(allBodies[i], { x: 0, y: 0 });
+            Body.setAngularVelocity(allBodies[i], 0);
+        }
+
+        if (window.gameRunner && !gameState.isPaused) {
+            Matter.Runner.run(window.gameRunner, window.gameEngine);
+        }
+
         gameState.isTurnActive = false;
         gameState.canShoot = true;
         gameState.score.red = 0;
@@ -564,11 +516,9 @@ restartBtn.addEventListener('click', () => {
         gameState.turn = 'red';
         gameState.turnCount = 0;
         updateTurnDisplay();
-        scoreRedEl.innerText = gameState.score.red;
-        scoreBlueEl.innerText = gameState.score.blue;
+        scoreRedEls.forEach(el => el.innerText = 0);
+        scoreBlueEls.forEach(el => el.innerText = 0);
     }
-
-    document.getElementById('reset').addEventListener('click', resetGame);
 
     function switchTurn() {
         gameState.turn = gameState.turn === 'red' ? 'blue' : 'red';
@@ -586,11 +536,11 @@ restartBtn.addEventListener('click', () => {
     }
 
     // --- INITIALIZATION ---
-    Render.run(render); // when we put the things on window we can access the runner globally.
+    Render.run(render);
     var runner = Runner.create();
-    Runner.run(runner, engine);// runner is matter.js object.
+    Runner.run(runner, engine);
 
-    window.gameRunner = runner; // now it can be accessed globally for pausing and resuming.
+    window.gameRunner = runner;
     window.gameEngine = engine;
     window.gameState = gameState;
 
@@ -601,17 +551,33 @@ restartBtn.addEventListener('click', () => {
         render.canvas.width = container.clientWidth;
         render.canvas.height = container.clientHeight;
     });
+}
 
-});
-
-function pauseGame() { //just putting the fucntion here so that it can be accessed globally.
-    if (gameState.isPaused) return;
+function pauseGame() {
+    if (!gameState || gameState.isPaused) return;
     Matter.Runner.stop(window.gameRunner);
-    window.gameState.isPaused = true;
+    gameState.isPaused = true;
 }
 
 function resumeGame() {
-    if (!gameState.isPaused) return;
+    if (!gameState || !gameState.isPaused) return;
     Matter.Runner.run(window.gameRunner, window.gameEngine);
-    window.gameState.isPaused = false;
+    gameState.isPaused = false;
+}
+
+function endGame(winner) {
+    // Play win sound
+    if (typeof SoundManager !== 'undefined') {
+        SoundManager.play('win');
+    }
+    
+    const winnerName = winner === 'red' 
+        ? (localStorage.getItem("player1") || "Player 1")
+        : (localStorage.getItem("player2") || "Player 2");
+    
+    const text = winnerName + " WINS!";
+    document.getElementById("winnerText").innerText = text;
+    
+    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+    document.getElementById("victoryScreen").classList.remove("hidden");
 }

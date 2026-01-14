@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clash Of Boots</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
+
+</head>
+<body>
+
+<!-- 🔊 BACKGROUND MUSIC (PERSISTENT) -->
+<audio id="bgMusic" loop>
+  <source src="audio/no-copyright-music-201745.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ================= START SCREEN ================= -->
+<div id="startScreen" class="screen">
+  <div class="background">
+    <div class="game-logo-box">
+      <div class="game-logo"></div>
+    </div>
+    <div class="game-enter-box">
+      <div class="game-enter" id="enterBox"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PLAYER SCREEN ================= -->
+<div id="playerScreen" class="screen hidden">
+    <div class="img-bg">
+
+        <div class="player-info">
+            <div class="player-1">
+                <div class="player-1-title"></div>
+                <div class="player-1-logo"></div>
+                <div class="player-1-name"><input type="text" class="player-1-name-text" placeholder="Player 1"></div>
+            </div>
+            <div class="img-vs"></div>
+            <div class="player-2">
+                <div class="player-2-title"></div>
+                <div class="player-2-logo"></div>
+                <div class="player-2-name"><input type="text" class="player-2-name-text" placeholder="Player 2"></div>       
+            </div>
+        </div>
+
+    <div class="enter-btn-box">
+      <div class="enter-btn" onclick="savePlayers()"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= GAME MODE SCREEN ================= -->
+<div id="gameModeScreen" class="screen hidden">
+  <div class="game-mode">
+    <div class="title-box">
+      <div class="title"></div>
+    </div>
+
+    <div class="box">
+  <div class="mode-wrapper" onclick="startMatch(1)">
+    <div class="one"></div>
+  </div>
+
+  <div class="mode-wrapper" onclick="startMatch(3)">
+    <div class="three"></div>
+  </div>
+
+  <div class="mode-wrapper" onclick="startMatch(5)">
+    <div class="five"></div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<!-- ================= FUTSAL SCREEN ================= -->
+<div id="futsalScreen" class="screen hidden">
+
+  <!-- TOP BAR (DO NOT REMOVE) -->
+  <div class="top-bar">
+    <span class="left-score red-score">0</span>
+    <span class="center-text">VS</span>
+    <span class="right-score blue-score">0</span>
+  </div>
+
+  <div class="background">
+
+    <!-- MENU BUTTON -->
+    <div class="right">
+      <div class="menu">☰</div>
+    </div>
+
+    <!-- TEAM INFO -->
+    <div class="team-container">
+
+      <div class="team-1-box">
+        <div class="team-1"></div>
+        <div class="team-red">
+          <p class="player-name red-name">Player 1</p>
+          <p class="score-count red-score">0|</p>
+        </div>
+      </div>
+      
+      <div class="turn-board">
+        <div class="turn">
+          <p>0/30</p>
+        </div>
+      </div>
+
+      <div class="team-2-box">
+        <div class="team-blue">
+          <p class="player-name blue-name">Player 2</p>
+          <p class="score-count blue-score">|0</p>
+        </div>
+        <div class="team-2"></div>
+      </div>
+
+    </div>
+
+    <!-- GAME FIELD -->
+    <div class="futsal-box">
+      <div class="futsal"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= PAUSE OVERLAY (GLOBAL, NOT INSIDE FUTSAL) ================= -->
+<div id="pauseOverlay" class="pause-overlay hidden">
+  <div class="pause-popup">
+    <h2>Game Paused</h2>
+    <button id="resumeBtn">Resume</button>
+    <button id="restartBtn">Restart</button>
+    <button onclick="exitGame()" class="exit-btn">Exit</button>
+  </div>
+</div>
+
+
+<!-- ================= VICTORY SCREEN ================= -->
+<div id="victoryScreen" class="screen hidden">
+  <div class="background">
+    <h1 id="winnerText"></h1>
+    <button onclick="restartGame()">Play Again</button>
+    <button onclick="exitGame()">Exit</button>
+  </div>
+</div>
+
+<script src="futsal.js"></script>
+
+<script>
+/* ================= MUSIC ================= */
+const bgMusic = document.getElementById("bgMusic");
+document.addEventListener("click", () => {
+  if (bgMusic.paused) {
+    bgMusic.volume = 0.4;
+    bgMusic.play().catch(()=>{});
+  }
+}, { once:true });
+
+/* ================= SCREEN MANAGER ================= */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
+
+/* ================= NAVIGATION ================= */
+document.getElementById("enterBox").onclick = () => showScreen("playerScreen");
+
+function savePlayers() {
+  localStorage.setItem("player1", document.querySelector(".player-1-name-text").value || "Player 1");
+  localStorage.setItem("player2", document.querySelector(".player-2-name-text").value || "Player 2");
+  showScreen("gameModeScreen");
+}
+
+function startMatch(goals) {
+  window.selectedGoals = goals;
+  showScreen("futsalScreen");
+  initFutsal(goals);
+}
+
+function exitGame() {
+  showScreen("startScreen");
+}
+
+function restartGame() {
+  showScreen("gameModeScreen");
+}
+</script>
+
+</body>
+</html>

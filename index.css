@@ -1,0 +1,774 @@
+.screen {
+  width: 100%;
+  height: 100vh;
+}
+
+.hidden {
+  display: none;
+}
+
+/*start.css*/
+
+    *{
+        margin: 0px;
+        box-sizing: border-box;
+    }
+    .background{
+        background-image: url("./img/background.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100vh;
+    }
+    .game-logo-box{
+        width: 100%;
+        height: 55vh;
+        display: flex;
+        justify-content: center;
+    }
+    .game-logo{
+        width: 40%;
+        height: 100%;
+        background-image: url("./img/COB.png");
+        background-size: 400px;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .game-enter-box{
+        width: 100%;
+        height: 35vh;
+        display: flex;
+        justify-content: center;
+    }
+    .game-enter{
+        width: 100%;
+        height: 30vh;
+        background-image: url("./img/start.png");
+        background-size: 327px;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .game-enter-box a{
+        width: 40%;
+        height: 30vh;
+    }
+    .game-enter:hover{
+        /* background-size: 400px; */
+        transition: 1s;
+        transform: translateY(20px);
+    }
+    
+/*player.css*/
+
+    *{
+        margin: 0px;
+        box-sizing: border-box;
+        transition: 1s;
+    }
+    .img-bg{
+        background-image: url("./img/background.png");
+        background-size: cover;
+        width: 100%;
+        height: 100vh;
+    }
+    .player-info{
+        width: 100%;
+        height: 65vh;
+        display: flex;
+    }
+    .player-1{
+        width: 35%;
+        height: 100%;
+        float: left;
+        padding: 47px 47px 0px 47px;
+        display: flex;
+        flex-direction: column;
+    }
+    .player-1 .player-1-title{
+        width: 295px;
+        height: 89px;
+        background-image: url("./img/player-1.png");
+        background-size: cover;
+        border-radius: 40px;
+        background-position: center;
+        margin: auto;
+    }
+    .player-1 .player-1-logo{
+        height: 215px;
+        background-image: url("./img/team-1.png");
+        background-size: 280px;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .player-1 .player-1-name{
+        width: 100%;
+        height: 100px;
+        padding-top: 30px;
+    }
+    .player-1 .player-1-name .player-1-name-text{
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: hsl(0, 0%, 91%);
+        font-size: 20px;
+        text-align: left;
+        padding-left: 20px;
+        border-radius: 20px;
+    }
+    .img-vs{
+        width: 30%;
+        height: 100%;
+        background-image: url("./img/versus.png");
+        background-size: 200px;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .player-2{
+        width: 35%;
+        height: 100%;
+        float: left;
+        padding: 47px 47px 0px 47px;
+        display: flex;
+        flex-direction: column;
+    }
+    .player-2 .player-2-title{
+        width: 295px;
+        height: 89px;
+        background-image: url("./img/player-2.png");
+        background-size: cover;
+        border-radius: 40px;
+        background-position: center;
+        margin: auto;
+    }
+    .player-2 .player-2-logo{
+        height: 215px;
+        background-image: url("./img/team-2.png");
+        background-size: 280px;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .player-2 .player-2-name{
+        width: 100%;
+        height: 100px;
+        padding-top: 30px;
+    }
+    .player-2 .player-2-name .player-2-name-text{
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: hsl(0, 0%, 91%);
+        font-size: 20px;
+        text-align: left;
+        padding-left: 20px;
+        border-radius: 20px;
+    }
+    .enter-btn-box{
+        width: 100%;
+        height: 30vh;
+        display: flex;
+        justify-content: center;
+    }
+    .enter-btn{
+        width: 100%;
+        height: 100%;
+        background-image: url("./img/enter.png");
+        background-size: 270px;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .enter-btn-box a{
+        width: 30%;
+        height: 70%;
+    }
+
+/*gamemode.css*/
+
+    * {
+        box-sizing: border-box;
+        margin: 0px;
+    }
+
+    .game-mode{
+    background-image: url("./img/background.png");
+    background-size:cover;
+    background-repeat: no-repeat;
+    width:100%;
+    height: 100vh;
+    position:relative;
+    }
+
+    .small-box{
+    width:100%;
+    height:10vh;
+    justify-content: center;
+    display:flex;
+    }
+    .small-logo{
+    background-image: url("./img/logo-removebg.png");
+    background-size:65px;
+    background-repeat: no-repeat;
+    margin-left: 1180px;
+    width:35%;
+    height:100%;
+    }
+
+    .title-box{
+    width:100%;
+    height:29vh;
+    justify-content: center;
+    display: inline-flex;
+    }
+    .title{
+    background-image: url("./img/Game\ Mode.png");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center; 
+    width:70%;
+    height:100%;
+    }
+
+    .box{
+    width:100%;
+    height: 215px;
+    justify-content: space-evenly;
+    display:flex;
+    }
+    .one{
+    background-image: url("./img/1.jpg");
+    }
+    .three{
+    background-image: url("./img/3.jpg");
+    }
+    .five{
+    background-image: url("./img/5.jpg");
+    }
+    .one, .three, .five{
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    width:100%;
+    height:100%;
+    border-radius: 30px;
+    cursor: pointer;
+    border: 3px solid black;
+    /* box-shadow: 0px 4px 10px rgba(0,0,0,0.3); */
+    }
+    .mode-wrapper {
+  width: 15%;
+  height: 100%;
+  cursor: pointer;
+}
+
+    /* .three{
+    background-image: url("/img/3.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 180px;
+    width:35vh;
+    height:35vh;
+    border-radius: 30px;
+    cursor:pointer;
+    }
+    .five{
+    background-image: url("/img/5.jpg");
+    width:35vh;
+    height:35vh;
+    background-size: 180px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 30px;
+    cursor:pointer;
+    } */
+    .one:hover{
+        box-shadow: 5px 5px 5px 10px rgba(0,0,0,0.3);
+    }
+    .three:hover{
+        box-shadow: 5px 5px 5px 10px rgba(0,0,0,0.3);
+    }
+    .five:hover{
+        box-shadow: 5px 5px 5px 10px rgba(0,0,0,0.3);
+    }
+
+/*futsal.css*/
+
+    * {
+        margin: 0px;
+        box-sizing: border-box;
+    }
+
+    .background {
+        background-image: url(./img/background.png);
+        background-size: cover;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100vh;
+        overflow: visible;
+    
+    }
+    .right{
+        position: absolute;
+        display: inline-block;
+    }
+    .dropdown{
+        position: absolute;
+        display:none;
+        background-color: rgba(0,0,0,0.5);
+        top:100%;
+        right:0;
+        border-radius: 4px;
+        
+    }
+    .dropdown ul{
+        list-style:none;
+        margin:0;
+        padding:0;
+    }
+    .dropdown li{
+        padding: 10px 15px;
+        color: white;
+        z-index: 1000;
+    }
+    .dropdown a{
+        padding: 10px 15px;
+        text-decoration:none;
+        color: red;
+    }
+
+    .dropdown li:hover{
+    color: yellow;
+    
+    }
+    .menu {
+        position: fixed;       
+        top: 20px;             
+        right: 20px;           
+        font-size: 50px;       
+        color: #101010;        
+        cursor: pointer;       
+        z-index: 100;
+    }
+    .menu:active {
+        transform: scale(0.9); 
+    }
+
+
+    .team-container {
+        width: 100%;
+        height: 11vh;
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .team-1-box,
+    .team-2-box {
+        width: 48%;
+        height: 11vh;
+        display: flex;
+        font-size: smaller;
+        position:relative;
+    }
+    .team-1,
+    .team-2 {
+        width: 22%;
+        height: 120%;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .team-1 {
+        background-image: url(./img/team-1.png);
+        position: absolute;
+        top: 0px;
+        left:80px;
+    }
+
+    .team-2 {
+        background-image: url(./img/team-2.png);
+        position: absolute;
+        top:0px;
+        left:380px;
+        font-size: small;
+    }
+
+    .player-name {
+        font-size: 50px;
+        font-family: 'Times New Roman', Times, serif;
+        font-weight: bolder;
+        display: inline-flex;
+        align-self: center;
+    }
+
+    .red-name {
+        float: left;
+    }
+
+    .blue-name {
+        float: right;
+    }
+    .red-score,
+    .blue-score{
+        display:inline-block;
+        width: 50px;
+        font-weight: bold;
+        color: #c7deef;
+
+    }
+    .red-score{
+        position:absolute;
+        top:5px;
+        left:400px;
+    }
+    .blue-score{
+        position: absolute;
+        top:5px;
+        right:400px;
+    }
+
+    .score-count {
+        width: 10%;
+        font-size: 67px;
+        font-family: 'Times New Roman', Times, serif;
+        font-weight: bolder;
+        display: inline-flex;
+        /* position: fixed;
+        top:60px;
+        left:100px; */
+    }
+
+
+    .turn-board {
+        width: 15%;
+        height: 4vh;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        top:70px;
+        left:8px;
+    }
+
+    .turn {
+        width: 80%;
+        height: 180%;
+        background-color: rgb(124, 132, 154);
+        border-radius: 50px;
+        font-size: 30px;
+        color: rgb(72, 96, 130);
+        /* background-image: url(./img/score.png);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;  */
+    }
+
+    .turn p {
+        height: 100%;
+        width: 100%;
+        font-size: 30px;
+        position:absolute;
+        top:10px;
+        left:70px;
+    }
+
+
+
+    .top-bar {
+        width: 75%;                       
+        height: 90px;                      
+        background-color: rgba(95, 145, 199, 0.95); 
+        border-radius: 60px;               
+        /* box-shadow: 0 6px 15px rgba(87, 134, 153, 0.25); */
+
+        display: flex;
+        justify-content: space-between;     
+        align-items: center;
+        padding: 0 40px;                   
+
+        font-size: 40px;
+        font-weight: bold;
+        box-shadow: 0 60px 15px -60px rgba(0,0,0,0.25); 
+
+        /* 🔥 TOP CENTER POSITION */
+        position:absolute;                    
+        top: 0px;                           
+        left: 50%;                           
+        transform: translateX(-50%);         
+    
+    }
+
+    /* Individual text styling */
+    .left-score {
+        color: rgb(236, 123, 123);
+    }
+
+    .center-text {
+        font-size: 32px;
+        color: black;
+    }
+
+    .right-score {
+        color: rgb(93, 214, 200);
+    }
+
+
+
+    .team-red {
+        font-family: 'Times New Roman', Times, serif;
+        position: absolute;
+        top: 5px;
+        left:250px;
+        color:rgb(32, 11, 51);
+
+    }
+    .team-blue {
+        font-family: 'Times New Roman', Times, serif;
+        position: absolute;
+        top: 5px;
+        left:250px;
+        color:rgb(45, 30, 10);
+    }
+    .futsal-box {
+        width: 100%;
+        height: 89vh;
+        display: flex;
+        justify-content: center;
+        overflow: visible;
+    }
+    .futsal {
+        width: 96%;
+        height: 89vh;
+        background-image: url(./img/final-ground.png);
+        background-repeat: no-repeat;
+        background-size: 1231px;
+        background-position: center;
+    }
+    /* Add this to your index.css file to make the Exit button red */
+
+/* PAUSE OVERLAY - Updated Exit Button */
+.pause-popup .exit-btn {
+    display: block;
+    width: 200px;
+    margin: 10px auto;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: #dc143c !important;  /* Crimson red */
+    color: white !important;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.pause-popup .exit-btn:hover {
+    background: #ff1744 !important;  /* Brighter red on hover */
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}
+
+
+
+    /* PAUSE OVERLAY */
+    .pause-overlay {
+        position: fixed;
+        inset: 0; /*shortcut for top=0, right, bottom left =0*/
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pause-popup {
+        background: #1e2a3a;
+        padding: 30px 50px;
+        border-radius: 20px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .pause-popup h2 {
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+
+    .pause-popup button,
+    .pause-popup .exit-btn {
+        display: block;
+        width: 200px;
+        margin: 10px auto;
+        padding: 12px;
+        font-size: 18px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .pause-popup button {
+        background: #4da6ff;
+        color: black;
+    }
+
+    .pause-popup button:hover {
+        background: #7bbcff;
+    }
+
+    .exit-btn {
+        background: crimson;
+        color: white;
+        text-decoration: none;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+/*victory.css*/
+/* Add these styles to your index.css file to fix the victory screen */
+
+/* Victory Screen Fixes */
+#victoryScreen .background {
+    position: relative;
+}
+
+#victoryScreen .victory-box {
+    width: 100%;
+    height: 63vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#victoryScreen .victory {
+    width: 100%;
+    height: 100%;
+    background-image: url(./img/victory.png);
+    background-size: 871px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#victoryScreen .options-container {
+    width: 100%;
+    height: 20vh;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    position: absolute;
+    bottom: 10vh;
+}
+
+#victoryScreen .play-box,
+#victoryScreen .exit-box {
+    width: 20%;
+    height: 20vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#victoryScreen .play-box a,
+#victoryScreen .exit-box a {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#victoryScreen .play,
+#victoryScreen .exit {
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+#victoryScreen .play {
+    background-image: url(./img/play.png);
+}
+
+#victoryScreen .exit {
+    background-image: url(./img/exit.png);
+}
+
+#victoryScreen .play:hover,
+#victoryScreen .exit:hover {
+    transform: scale(1.1);
+}
+
+/* Ensure winner text is visible */
+#winnerText {
+    position: absolute !important;
+    top: 30% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    font-size: 60px !important;
+    color: #FFD700 !important;
+    text-shadow: 4px 4px 8px rgba(0,0,0,0.9) !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-weight: bold !important;
+    width: 100% !important;
+    text-align: center !important;
+    z-index: 10 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+    *{
+    margin : 0px;
+    box-sizing: border-box;
+    }
+
+    .background{
+        background-image: url(./img/background.png);
+        background-size: cover;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100vh;
+    }
+    .victory-box{
+        width: 100%;
+        height: 63vh;
+        display: flex;
+        justify-content: center;  
+    }
+    .victory{
+        width: 120%;
+        height: 58vh;
+        background-image: url(./img/victory.png);
+        background-size: 871px;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .options-container{
+        width: 100%;
+        height: 20vh;
+        display: flex;
+        justify-content:space-evenly;  
+    
+    }
+    .play-box,.exit-box{
+        width: 20%;
+        height: 22vh;
+        display: flex;
+    }
+    .play,.exit{
+        width: 100%;
+        height: 94%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    .play{
+        background-image: url(./img/play.png);
+        background-position: left;
+    }
+
+    .exit{
+        background-image: url(./img/exit.png);
+        background-position: right;
+    }
+
