@@ -93,7 +93,7 @@
     background-image: url(./img/team-2.png);
     position: absolute;
     top:0px;
-    left:380px;
+    left:430px;
     font-size: small;
 }
 
@@ -103,6 +103,7 @@
     font-weight: bolder;
     display: inline-flex;
     align-self: center;
+    width: auto;
 }
 
 .red-name {
@@ -125,21 +126,30 @@
     top:5px;
     left:400px;
 }
-.blue-score{
-    position: absolute;
-    top:5px;
-    right:400px;
-}
 
 .score-count {
-    width: 10%;
+    width: auto;
     font-size: 67px;
     font-family: 'Times New Roman', Times, serif;
     font-weight: bolder;
     display: inline-flex;
+    margin-top: -8px;
+    height: 90px;
     /* position: fixed;
     top:60px;
     left:100px; */
+}
+
+.red-score{
+    border-right: 3px solid white;
+    padding-right: 8px;
+}
+
+.blue-score{
+    border-left: 3px solid white;
+    padding-left: 8px;
+    z-index: 1;
+    /* margin-right: 100px; */
 }
 
 
@@ -151,6 +161,7 @@
     position: relative;
     top:70px;
     left:8px;
+    z-index: 20;
 }
 
 .turn {
@@ -229,8 +240,10 @@
     font-family: 'Times New Roman', Times, serif;
     position: absolute;
     top: 5px;
-    left:250px;
+    /* left:250px; */
     color:rgb(45, 30, 10);
+    width: 400px;
+    height: 82px;
 }
 
 
