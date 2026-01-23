@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="gamemode.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Mode</title>
+     <title>Game Mode</title> 
 </head>
 
 <body>
@@ -14,7 +14,11 @@
             <div class="small-logo"></div>
         </div>
         <div class="title-box">
-            <div class="title"></div>
+            <div class="title" id="game-mode-text">
+                <span>S</span><span>e</span><span>l</span><span>e</span><span>c</span><span>t</span><span>-</span><span>G</span><span>a</span><span>m</span><span>e</span>
+        <span> </span>
+        <span>M</span><span>o</span><span>d</span><span>e</span>
+            </div>
         </div>
         <div class="box">
             <a href="futsal.html?goals=1">
@@ -29,5 +33,34 @@
         </div>
     </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const letters = document.querySelectorAll("#game-mode-text span");
+
+    const tl = gsap.timeline({ repeat: -1, yoyo: true, repeatDelay: 0.5 });
+
+    letters.forEach(letter => {
+        const xOffset = gsap.utils.random(-100, 100);
+        const yOffset = gsap.utils.random(-100, 100);
+        const rotation = gsap.utils.random(-360, 360);
+        gsap.set(letter, { x: xOffset, y: yOffset, rotation: rotation, scale: 0, opacity: 0 });
+    });
+
+    tl.to(letters, {
+        duration: 3,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        scale: 1,
+        opacity: 1,
+        stagger: 0.09,
+        ease: "power4.inOut"
+    });
+});
+</script>
+
+
+
 
 </html>

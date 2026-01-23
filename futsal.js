@@ -482,6 +482,8 @@ document.addEventListener("DOMContentLoaded", function () {
             scoreBlueEl.innerText = gameState.score.blue;
         }
 
+        showGoalConfetti(scoringTeam);
+
         if (gameState.score[scoringTeam] >= gameState.maxGoals) {
 
     // 🔥 SAVE WINNER TEAM
@@ -507,7 +509,7 @@ document.addEventListener("DOMContentLoaded", function () {
 }
 
 
-        gameState.turn = scoringTeam === 'red' ? 'blue' : 'red';
+        // gameState.turn = scoringTeam === 'red' ? 'blue' : 'red';
 
         setTimeout(function () {
             resetPositions();
@@ -571,12 +573,61 @@ document.addEventListener("DOMContentLoaded", function () {
             gameState.turnCount = 30;
         }
         updateTurnDisplay();
+        showTurnAnimation(gameState.turn);
     }
 
     function updateTurnDisplay() {
         turnIndicator.innerText = gameState.turnCount + "/30";
         turnIndicator.style.color = "white";
     }
+
+    function showTurnAnimation(turn) {
+    // Create div for turn indicator
+    var turnEl = document.createElement('div');
+    turnEl.innerText = turn === 'red' ? '🔴 RED TURN' : '🔵 BLUE TURN';
+
+    // Common styles
+    turnEl.style.position = 'fixed';
+    turnEl.style.top = '120px';
+    turnEl.style.fontSize = '32px';
+    turnEl.style.fontWeight = 'bold';
+    turnEl.style.padding = '15px 25px';
+    turnEl.style.color = 'white';
+    turnEl.style.zIndex = 9999;
+    turnEl.style.opacity = 1;
+    turnEl.style.background = turn === 'red' ? 'crimson' : 'dodgerblue';
+    turnEl.style.pointerEvents = 'none'; // prevents clicks blocking
+
+    // Start offscreen & set border-radius correctly
+    if (turn === 'red') {
+        turnEl.style.left = '-350px';
+        turnEl.style.right = '';
+        turnEl.style.borderRadius = '0 40px 40px 0';
+    } else {
+        turnEl.style.right = '-350px';
+        turnEl.style.left = '';
+        turnEl.style.borderRadius = '40px 0 0 40px';
+    }
+
+    document.body.appendChild(turnEl);
+
+    // Animate slide in
+    if (turn === 'red') {
+        gsap.to(turnEl, { duration: 0.8, left: '10px', ease: "power4.out" });
+    } else {
+        gsap.to(turnEl, { duration: 0.8, right: '10px', ease: "power4.out" });
+    }
+
+    // Fade out after delay
+    gsap.to(turnEl, {
+        duration: 0.8,
+        delay: 1.2,
+        opacity: 0,
+        onComplete: function() {
+            turnEl.remove();
+        }
+    });
+}
 
     // --- INITIALIZATION ---
     Render.run(render);
@@ -586,9 +637,63 @@ document.addEventListener("DOMContentLoaded", function () {
     updateTurnDisplay();
     resetPositions();
 
+// Show first RED turn at game start
+showTurnAnimation('red');
+
+
     window.addEventListener('resize', function () {
         render.canvas.width = container.clientWidth;
         render.canvas.height = container.clientHeight;
     });
 
 });
+
+function showGoalConfetti(team) {
+    const container = document.getElementById('goal-confetti');
+    const goalColor = team === 'red' ? 'crimson' : 'dodgerblue';
+
+    // Position at goal center
+    const goalX = team === 'red' ? window.innerWidth - 100 : 100;  // adjust for exact goal center
+    const goalY = window.innerHeight / 2;  // middle of field vertically
+
+    for (let i = 0; i < 25; i++) {
+        const circle = document.createElement('div');
+        circle.style.position = 'absolute';
+        const size = Math.random() * 12 + 8;  // size between 8-20px
+        circle.style.width = circle.style.height = size + 'px';
+        circle.style.backgroundColor = goalColor;
+        circle.style.borderRadius = '50%';
+        circle.style.left = goalX + 'px';
+        circle.style.top = goalY + 'px';
+        circle.style.opacity = 0;
+
+        container.appendChild(circle);
+
+        // Random burst direction
+        const angle = Math.random() * Math.PI * 2; // 0 → 360 degrees
+        const distance = Math.random() * 60 + 30;  // how far it pops out
+
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+
+        // Animate
+        gsap.to(circle, {
+            duration: 2,  // pop duration
+            x: x,
+            y: y,
+            scale: 1,
+            opacity: 1,
+            ease: "power2.out",
+            onComplete: () => {
+                gsap.to(circle, {
+                    duration: 2.5,
+                    opacity: 0,
+                    scale: 0,
+                    onComplete: () => circle.remove()
+                });
+            }
+        });
+    }
+}
+
+

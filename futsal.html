@@ -10,7 +10,12 @@
 </head>
 
 <body>
-    
+   <!-- VS Overlay -->
+<div id="vs-overlay">
+    <div id="vs-text">Player 1 VS Player 2</div>
+</div>
+<div id="goal-confetti" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:hidden; z-index:999;"></div>
+
     <div class="top-bar">
     <span class="left-score"></span>
     <span class="center-text"></span>
@@ -49,7 +54,7 @@
             </div>
             <div class="team-2-box">
                 <div class="team-blue">
-                    <p class="player-name blue-name">player 2</p>
+                    <p class="player-name blue-name">player 2 </p>
                     <p class="score-count blue-score">|0</p>
                 </div>
                 <div class="team-2"> </div>
@@ -64,16 +69,35 @@
     <script src="futsal.js"></script> 
 
     <script>
-        const player1 = localStorage.getItem("player1") || "Player 1";
-        const player2 = localStorage.getItem("player2") || "Player 2";
+document.addEventListener("DOMContentLoaded", function() {
+    const player1 = localStorage.getItem("player1") || "Player 1";
+    const player2 = localStorage.getItem("player2") || "Player 2";
 
-        document.querySelector(".red-name").innerText = player1;
-        document.querySelector(".blue-name").innerText = player2;
+    // --- VS Animation Overlay ---
+    const vsText = document.getElementById("vs-text");
+    if(vsText) vsText.innerText = `${player1} VS ${player2}`;
 
+    const overlay = document.getElementById("vs-overlay");
+    if(overlay && vsText) {
+        vsText.addEventListener("animationend", () => {
+            overlay.remove(); // Remove overlay after 3s animation
 
-</script>   
+            // --- Now update the top bar ---
+            document.querySelector(".left-score").innerText = player1;
+            document.querySelector(".center-text").innerText = "VS";
+            document.querySelector(".right-score").innerText = player2;
+        });
+    } else {
+        // fallback if overlay not present
+        document.querySelector(".left-score").innerText = player1;
+        document.querySelector(".center-text").innerText = "VS";
+        document.querySelector(".right-score").innerText = player2;
+    }
+});
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="futsal.js"></script>
+
 </body>
-
-
-
 </html>

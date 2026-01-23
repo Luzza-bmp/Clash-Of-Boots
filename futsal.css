@@ -264,3 +264,100 @@
     background-position: center;
 }
 
+/* VS Overlay */
+#vs-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* dim background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* VS Text */
+#vs-text {
+    font-size: 80px;
+    font-weight: bold;
+    color: #f9d342;
+    transform: scale(0);
+    opacity: 0;
+    animation:popVS 3s ease forwards;
+}
+
+/* VS Animation */
+@keyframes popVS {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+
+/* INDICATOR HO HAI */
+.turn-indicator {
+    position: fixed;
+    top: 120px;
+    padding: 15px 30px;
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* RED (LEFT) */
+.red-turn {
+    background: crimson;
+    left: -300px;
+    border-radius: 0 40px 40px 0;
+}
+
+/* BLUE (RIGHT) */
+.blue-turn {
+    background: dodgerblue;
+    right: -300px;
+    border-radius: 40px 0 0 40px;
+}
+
+/* SHOW ANIMATIONS */
+.show-red {
+    animation: slideInLeft 0.8s ease forwards;
+}
+
+.show-blue {
+    animation: slideInRight 0.8s ease forwards;
+}
+
+/* HIDE ANIMATIONS */
+.hide-red {
+    animation: slideOutLeft 0.6s ease forwards;
+}
+
+.hide-blue {
+    animation: slideOutRight 0.6s ease forwards;
+}
+
+/* KEYFRAMES */
+@keyframes slideInLeft {
+    from { left: -300px; opacity: 0; }
+    to { left: 0; opacity: 1; }
+}
+
+@keyframes slideOutLeft {
+    from { left: 0; opacity: 1; }
+    to { left: -300px; opacity: 0; }
+}
+
+@keyframes slideInRight {
+    from { right: -300px; opacity: 0; }
+    to { right: 0; opacity: 1; }
+}
+
+@keyframes slideOutRight {
+    from { right: 0; opacity: 1; }
+    to { right: -300px; opacity: 0; }
+}

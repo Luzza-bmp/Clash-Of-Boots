@@ -47,13 +47,23 @@ box-sizing: border-box;
 .play{
     background-image: url(./img/play.png);
     background-position: left;
+    animation: play 2s ease-in-out infinite;
 }
-
+@keyframes play {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* moves up */
+    100% { transform: translateY(0); }   /* back down */
+}
 .exit{
     background-image: url(./img/exit.png);
     background-position: right;
+    animation: exit 2s ease-in-out infinite;
 }
-
+@keyframes exit {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* moves up */
+    100% { transform: translateY(0); }   /* back down */
+}
 
 .winner-popup {
     position: fixed;
