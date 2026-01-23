@@ -10,29 +10,29 @@
 </head>
 
 <body>
-    
+
     <div class="top-bar">
-    <span class="left-score"></span>
-    <span class="center-text" style="padding-left: 20px; font-size: 55px;">VS</span>
-    <span class="right-score"></span>
-</div>
+        <span class="left-score"></span>
+        <span class="center-text" style="padding-left: 20px; font-size: 55px;">VS</span>
+        <span class="right-score"></span>
+    </div>
     <div class="background">
 
         <div class="right">
             <div class="menu">
                 <i class="fa-solid fa-list "></i>
                 <div class="dropdown">
-                   
+
                     <ul>
                         <li id="reset">Restart</li>
-                        <a href ="start.html">Exit</a>
+                        <a href="start.html">Exit</a>
                     </ul>
                 </div>
             </div>
         </div>
 
         <div class="team-container">
-            
+
 
             <div class="team-1-box">
                 <div class="team-1"> </div>
@@ -59,23 +59,6 @@
             <div class="futsal"></div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
-    <script src="futsal.js"></script> 
-
-    <script>
-        const player1 = localStorage.getItem("player1") || "Player 1";
-        const player2 = localStorage.getItem("player2") || "Player 2";
-
-        document.querySelector(".red-name").innerText = player1;
-        document.querySelector(".blue-name").innerText = player2;
-
-
-</script>   
-
-<body>
-
-
-    <!-- PAUSE OVERLAY GOES HERE -->
     <div id="pauseOverlay" class="pause-overlay hidden">
         <div class="pause-popup">
             <h2>Game Paused</h2>
@@ -85,8 +68,18 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="futsal.js"></script>
+
+    <script>
+        const player1 = localStorage.getItem("player1") || "Player 1";
+        const player2 = localStorage.getItem("player2") || "Player 2";
+
+        document.querySelector(".red-name").innerText = player1;
+        document.querySelector(".blue-name").innerText = player2;
+    </script>
 </body>
 
-</body>
+</html>
 
 </html>

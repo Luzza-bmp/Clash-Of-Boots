@@ -1,5 +1,5 @@
 // Global variables
-var width, height, engine, mysteryBox, mysteryBoxTurn, gameState, lastMysteryBoxSpawn, storedPowerup, sizePower, players, ball, lastPowerupGiven;
+var width, height, engine, mysteryBox, mysteryBoxTurn, gameState, lastMysteryBoxSpawn, storedPowerup, sizePower, opponentSlowed, players, ball, lastPowerupGiven;
 
 // Wait for the DOM to load
 document.addEventListener("DOMContentLoaded", function () { // so the domcontentloded is there because the js may run before the html file is fully loaded and this helps to wait the js to run only after the html file is loaded.
@@ -75,6 +75,8 @@ document.addEventListener("DOMContentLoaded", function () { // so the domcontent
         isPaused: false,//pause state ra pause function bhanne hunxa, pause state le chai remembers that game is paused so that weird physics apply na hoss, ani pause function halna imp xa cause tesle chai runner lai stop garxa and start garxa.
         currentFormation: '2-2' // Initial formation
     };
+
+    opponentSlowed = { red: false, blue: false };
 
     // --- DOM ELEMENTS ---
     var scoreRedEl = document.querySelector('.red-score');
@@ -441,10 +443,12 @@ document.addEventListener("DOMContentLoaded", function () { // so the domcontent
         var baseForce = 0.09;
         var currentMaxForce = baseForce;
 
-        // Apply speed boost powerup - INCREASED MULTIPLIER
+        // Apply speed boost powerup - MOAB (Mother of all Boosts)
         // Logic moved inside the shot execution block to prevent wasting it on cancelled drags
+        var dragMultiplier = 0.0006;
         if (storedPowerup[gameState.turn]) {
-            currentMaxForce = baseForce * 2.2;
+            currentMaxForce = baseForce * 6.0; // Drastic increase
+            dragMultiplier = 0.0018; // 3x sensitivity - barely dragging triggers huge power
         }
 
         // Apply giant player extra force
@@ -453,7 +457,13 @@ document.addEventListener("DOMContentLoaded", function () { // so the domcontent
             console.log(gameState.turn.toUpperCase() + ' GIANT PLAYER! Double power: ' + currentMaxForce);
         }
 
-        var forceMagnitude = Math.min(rawDistance * 0.0006, currentMaxForce);
+        // Apply decreased speed if opponent used slow powerup
+        if (opponentSlowed[gameState.turn]) {
+            currentMaxForce *= 0.15;
+            console.log(gameState.turn.toUpperCase() + ' IS SLOWED! Ultra low power.');
+        }
+
+        var forceMagnitude = Math.min(rawDistance * dragMultiplier, currentMaxForce);
 
         if (rawDistance > 0.0005) {
             // CONSUME POWERUP HERE (only if actually shooting)
@@ -512,6 +522,15 @@ document.addEventListener("DOMContentLoaded", function () { // so the domcontent
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('👤', x, y + 50);
+            }
+
+            // Draw slowed icon (Turtle)
+            if (opponentSlowed[team]) {
+                ctx.fillStyle = '#8B4513'; // SaddleBrown
+                ctx.font = 'bold 32px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🐢', x, y + 100);
             }
         });
 
@@ -714,6 +733,7 @@ document.addEventListener("DOMContentLoaded", function () { // so the domcontent
         storedPowerup.blue = false;
         sizePower.red = false;
         sizePower.blue = false;
+        opponentSlowed = { red: false, blue: false };
         lastMysteryBoxSpawn = 0;
 
         // Reset to default formation
@@ -770,6 +790,11 @@ document.addEventListener("DOMContentLoaded", function () { // so the domcontent
             Composite.remove(engine.world, mysteryBox);
             mysteryBox = null;
             mysteryBoxTurn = null;
+        }
+
+        // Reset slow effect for the team that just finished their turn
+        if (opponentSlowed[gameState.turn]) {
+            opponentSlowed[gameState.turn] = false;
         }
 
         gameState.turn = gameState.turn === 'red' ? 'blue' : 'red';
@@ -894,12 +919,17 @@ function collectMysteryBox(team) {
 
     // Alternate powerups to ensure variety
     if (lastPowerupGiven === 'speed') {
-        powerupType = 'giant';
+        powerupType = Math.random() < 0.5 ? 'giant' : 'slowOpponent';
     } else if (lastPowerupGiven === 'giant') {
-        powerupType = 'speed';
-    } else {
-        // First powerup is random
+        powerupType = Math.random() < 0.5 ? 'speed' : 'slowOpponent';
+    } else if (lastPowerupGiven === 'slowOpponent') {
         powerupType = Math.random() < 0.5 ? 'speed' : 'giant';
+    } else {
+        // First powerup is random from all 3
+        var rand = Math.random();
+        if (rand < 0.33) powerupType = 'speed';
+        else if (rand < 0.66) powerupType = 'giant';
+        else powerupType = 'slowOpponent';
     }
 
     if (powerupType === 'speed') {
@@ -907,11 +937,18 @@ function collectMysteryBox(team) {
         powerupName = 'Speed Boost ⚡';
         lastPowerupGiven = 'speed';
         console.log('Gave Speed Boost to', team);
-    } else {
+    } else if (powerupType === 'giant') {
         sizePower[team] = true;
         powerupName = 'Giant Player 👤';
         lastPowerupGiven = 'giant';
         console.log('Gave Giant Player to', team);
+    } else {
+        // Slow Opponent
+        var opponent = team === 'red' ? 'blue' : 'red';
+        opponentSlowed[opponent] = true;
+        powerupName = 'Slow Opponent 🐢';
+        lastPowerupGiven = 'slowOpponent';
+        console.log('Gave Slow Opponent to', team, '-> slows', opponent);
     }
 
     alert(team.toUpperCase() + ' got ' + powerupName + '!');
