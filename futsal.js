@@ -412,16 +412,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     selectedBody = b;
                     dragStart = { x: x, y: y };
 
-                    // Apply size powerup when selecting
                     if (sizePower[gameState.turn]) {
-                        Matter.Body.scale(selectedBody, 1.4, 1.4);
-                        // Update sprite scale along with body scale
-                        Matter.Body.scale(selectedBody, 1.5, 1.5);
-                        Matter.Body.setDensity(selectedBody, 0.02); // 10x normal density - UNSTOPPABLE
-                        // Ensure sprite exists before scaling
+                        // Apply Giant Powerup - Tuner: 1.5x Size (User requested decrease)
+                        var scaleFactor = 1.5;
+                        Matter.Body.scale(selectedBody, scaleFactor, scaleFactor);
+
+                        // Increase density for collision power
+                        // Normal density is 0.002. Set to 0.01 (5x).
+                        // Mass scales with Area * Density. Area scales by 2.25x (1.5*1.5).
+                        // Total mass factor = 2.25 * 5 = 11.25x.
+                        Matter.Body.setDensity(selectedBody, 0.01);
+
+                        // Update sprite scale
                         if (selectedBody.render.sprite) {
-                            selectedBody.render.sprite.xScale *= 1.5;
-                            selectedBody.render.sprite.yScale *= 1.5;
+                            selectedBody.render.sprite.xScale *= scaleFactor;
+                            selectedBody.render.sprite.yScale *= scaleFactor;
                         }
                         selectedBody.isGiant = true;
                         sizePower[gameState.turn] = false;
@@ -479,9 +484,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (selectedBody.isGiant) {
-            currentMaxForce *= 2;
-            currentMaxForce *= 25; // Massive force for massive mass
-            console.log(gameState.turn.toUpperCase() + ' GIANT PLAYER! GOD MODE POWER: ' + currentMaxForce);
+            // Mass is ~11.25x normal.
+            // User reported it's too fast with 11.25x force.
+            // Reducing force multiplier to 8x (approx 70% of mass). 
+            // This will make it accelerate slower (feel heavier) but still have huge momentum.
+            var forceFactor = 6.0; //this is the change in power, when the giant hits the ball or player the force gets multiplied by 6.
+            currentMaxForce *= forceFactor;
+            dragMultiplier *= forceFactor;
+            console.log(gameState.turn.toUpperCase() + ' GIANT PLAYER! Force scaled by ' + forceFactor);
         }
 
         // Apply decreased speed if opponent used slow powerup
@@ -789,11 +799,12 @@ document.addEventListener("DOMContentLoaded", function () {
         for (var i = 0; i < bodies.length; i++) {
             var b = bodies[i];
             if (b.isGiant) {
-                Matter.Body.scale(b, 1 / 1.5, 1 / 1.5);
+                var scaleFactor = 1.5; // Must match the factor used in handleInputStart
+                Matter.Body.scale(b, 1 / scaleFactor, 1 / scaleFactor);
                 Matter.Body.setDensity(b, 0.002); // Reset to normal density
                 if (b.render.sprite) {
-                    b.render.sprite.xScale /= 1.5;
-                    b.render.sprite.yScale /= 1.5;
+                    b.render.sprite.xScale /= scaleFactor;
+                    b.render.sprite.yScale /= scaleFactor;
                 }
                 b.isGiant = false;
             }
