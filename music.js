@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'start.html': { path: './audio/menu-music.mp3', loop: true },
         'player.html': { path: './audio/menu-music.mp3', loop: true },
         'gamemode.html': { path: './audio/menu-music.mp3', loop: true },
-        'futsal.html': { path: './audio/game-music.mp3', loop: true },
+        'futsal.html': { path: './audio/menu-music.mp3', loop: true },
         'victory.html': { path: './audio/victory.mp3', loop: false }
     };
     
@@ -251,8 +251,11 @@ function initializeAudioButtons() {
 }
 
 // Global function for click sounds - FIXED
-window.playClickSound = function(event) {
+function playClickSound() {
     if (window.musicManager) {
         window.musicManager.playSound('./audio/click2.mp3', 1);
     }
 }
+
+// Make it globally available
+window.playClickSound = playClickSound;

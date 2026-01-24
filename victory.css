@@ -4,7 +4,7 @@ box-sizing: border-box;
 }
 
 .background{
-    background-image: url(./img/background.png);
+    background-image: url(./img/celebration.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     width: 100%;
@@ -19,7 +19,7 @@ box-sizing: border-box;
 .victory{
     width: 120%;
     height: 58vh;
-    background-image: url(./img/victory.png);
+    /* background-image: url(/img/victory.png); */
     background-size: 871px;
     background-repeat: no-repeat;
     background-position: center;
