@@ -7,18 +7,15 @@ box-sizing: border-box;
     background-image: url(./img/celebration.jpg);
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
     width: 100%;
     height: 100vh;
 }
-
 .victory-box{
     width: 100%;
     height: 63vh;
     display: flex;
     justify-content: center;  
 }
-
 .victory{
     width: 120%;
     height: 58vh;
@@ -27,32 +24,24 @@ box-sizing: border-box;
     background-repeat: no-repeat;
     background-position: center;
 }
-
 .options-container{
     width: 100%;
     height: 20vh;
     display: flex;
-    justify-content: space-evenly;
+    justify-content:space-evenly;  
+   
 }
-
 .play-box,.exit-box{
     width: 20%;
     height: 22vh;
     display: flex;
 }
-
-.play-box a, .exit-box a{
-    width: 100%;
-    height: 100%;
-}
-
 .play,.exit{
     width: 100%;
     height: 94%;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    cursor: pointer;
 }
 
 .play{
@@ -65,7 +54,6 @@ box-sizing: border-box;
     50% { transform: translateY(-10px); } /* moves up */
     100% { transform: translateY(0); }   /* back down */
 }
-
 .exit{
     background-image: url(./img/exit.png);
     background-position: right;
@@ -79,7 +67,7 @@ box-sizing: border-box;
 
 .winner-popup {
     position: fixed;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
     animation: popup 0.8s ease-out forwards;
@@ -121,7 +109,7 @@ box-sizing: border-box;
 
 #winner-text {
     position: fixed;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.5);
     font-size: 80px;
@@ -157,7 +145,7 @@ box-sizing: border-box;
     }
 }
 
-
+ 
 @keyframes popWinner {
     0% {
         transform: translate(-50%, -50%) scale(0);
@@ -181,8 +169,6 @@ box-sizing: border-box;
 .exit-box {
     cursor: pointer;
 } 
-
-/* Audio Controls - LEFT SIDE - STACKED VERTICALLY */
 .audio-controls {
     position: fixed;
     top: 20px;
@@ -227,3 +213,4 @@ box-sizing: border-box;
 .audio-btn.muted:hover {
     background-color: #cc0000;
 }
+

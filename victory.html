@@ -9,8 +9,8 @@
     <script src="music.js"></script>
 </head>
 <body>
-    <!-- Audio Controls -->
-    <div class="audio-controls">
+        <!-- AUDIO CONTROLS -->
+  <div class="audio-controls">
         <div class="audio-btn active" id="musicBtn" title="Toggle Music">
             <i class="fa-solid fa-music"></i>
         </div>
@@ -18,12 +18,11 @@
             <i class="fa-solid fa-bell"></i>
         </div>
     </div>
-
     <div class="dim-overlay"></div>
-        <h1 id="winner-text"></h1>
-        <div class="winner-popup">
-        <img src="./popper.gif" alt="Winner Sticker">
-    </div>
+<h1 id="winner-text"></h1>
+<div class="winner-popup">
+    <img src="./popper.gif" alt="Winner Sticker">
+</div>
 
 
     <div class="background">
@@ -31,20 +30,20 @@
             <div class="victory"></div>
         </div>
         <div class="options-container">
-                <div class="play-box"></div>
-                <a href="futsal.html" onclick="playClickSound()">
-                 <div class="play" id="playBtn"></div>
-                </a>
+            <div class="play-box">
+                <a href="futsal.html" onclick="playClickSound()"></a>
+                <div class="play" id="playBtn"></div>
             </div>
             <div class="exit-box">
-                <a href="start.html" onclick="playClickSound()">
-                   <div class="exit" id="exitBtn"></div>
-                </a>
+                <a href="start.html" onclick="playClickSound()"></a>
+                <div class="exit" id="exitBtn"></div>
             </div>
         </div>
     </div>
+    
 
-    <script>
+
+ <script>
     // PLAY AGAIN (same players)
     document.getElementById("playBtn").addEventListener("click", () => {
         // Only remove winner, keep players
@@ -82,5 +81,7 @@
     document.body.appendChild(title);
 </script>
 
+
+   
 </body>
 </html>
