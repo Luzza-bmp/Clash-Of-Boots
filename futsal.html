@@ -68,33 +68,42 @@
     <script src="futsal.js"></script> 
 
     <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const player1 = localStorage.getItem("player1") || "Player 1";
     const player2 = localStorage.getItem("player2") || "Player 2";
 
-    // --- VS Animation Overlay ---
+    // ✅ ALWAYS update scoreboard immediately
+    const leftScore = document.querySelector(".left-score");
+    const centerText = document.querySelector(".center-text");
+    const rightScore = document.querySelector(".right-score");
+
+    if (leftScore) leftScore.innerText = player1;
+    if (centerText) centerText.innerText = "VS";
+    if (rightScore) rightScore.innerText = player2;
+
+    // --- VS Overlay ---
     const vsText = document.getElementById("vs-text");
-    if(vsText) vsText.innerText = `${player1} VS ${player2}`;
-
     const overlay = document.getElementById("vs-overlay");
-    if(overlay && vsText) {
-        vsText.addEventListener("animationend", () => {
-            overlay.remove(); // Remove overlay after 3s animation
 
-            // --- Now update the top bar ---
-            document.querySelector(".left-score").innerText = player1;
-            document.querySelector(".center-text").innerText = "VS";
-            document.querySelector(".right-score").innerText = player2;
+    if (vsText) {
+        vsText.innerText = `${player1} VS ${player2}`;
+    }
+
+    if (overlay && vsText) {
+        vsText.addEventListener("animationend", () => {
+            overlay.remove();
+
+            // 🔥 notify futsal.js that VS animation finished
+            document.dispatchEvent(new Event("vsAnimationFinished"));
         });
     } else {
-        // fallback if overlay not present
-        document.querySelector(".left-score").innerText = player1;
-        document.querySelector(".center-text").innerText = "VS";
-        document.querySelector(".right-score").innerText = player2;
+        // fallback (no overlay)
+        document.dispatchEvent(new Event("vsAnimationFinished"));
     }
 });
 
 </script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="futsal.js"></script>
 

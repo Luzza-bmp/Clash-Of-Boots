@@ -275,6 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
         gameState.isTurnActive = false;
         gameState.canShoot = true;
         updateTurnDisplay();
+        gameState.maxGoals=targetGoals;
     }
 
     // --- INPUT HANDLING (Drag & Flick) ---
@@ -506,7 +507,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 500);
 
     return;
-}
+    }
 
 
         // gameState.turn = scoringTeam === 'red' ? 'blue' : 'red';
@@ -558,6 +559,7 @@ document.addEventListener("DOMContentLoaded", function () {
         gameState.score.blue = 0;
         gameState.turn = 'red';
         gameState.turnCount = 0;
+        gameState.maxGoals=targetGoals;
         updateTurnDisplay();
         scoreRedEl.innerText = gameState.score.red;
         scoreBlueEl.innerText = gameState.score.blue;
@@ -629,6 +631,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 }
 
+document.addEventListener("vsAnimationFinished", function () {
+    gameState.turn = 'red';
+    gameState.turnCount = 0;
+    updateTurnDisplay();
+    showTurnAnimation('red');
+});
+
     // --- INITIALIZATION ---
     Render.run(render);
     var runner = Runner.create();
@@ -638,7 +647,7 @@ document.addEventListener("DOMContentLoaded", function () {
     resetPositions();
 
 // Show first RED turn at game start
-showTurnAnimation('red');
+// showTurnAnimation('red');
 
 
     window.addEventListener('resize', function () {
