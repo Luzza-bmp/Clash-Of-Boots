@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clash-Of-Boots</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="player.css" type="text/css" rel="stylesheet">
+    <script src="music.js"></script>
 </head>
 <body>
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+        <div class="audio-btn active" id="musicBtn" title="Toggle Music">
+            <i class="fa-solid fa-music"></i>
+        </div>
+        <div class="audio-btn active" id="sfxBtn" title="Toggle Sound Effects">
+            <i class="fa-solid fa-bell"></i>
+        </div>
+    </div>
+
     <div class="img-bg">
         <div class="player-info">
             <div class="player-1">
@@ -23,23 +35,25 @@
         </div>
         <div class="enter-btn-box">
             <div class="enter-btn" onclick="startGame()"></div>
-            <!-- <a href="gamemode.html"><div class="enter-btn"></div></a> -->
         </div>
-    </div> 
+    </div>
 
     <script>
-function startGame() {
-    const player1 = document.querySelector('.player-1-name-text').value;
-    const player2 = document.querySelector('.player-2-name-text').value;
+        function startGame() {
+            if (window.musicManager) {
+                window.musicManager.playSound('./audio/click2.mp3', 0.6);
+            }
 
-    
-    localStorage.setItem("player1", player1);
-    localStorage.setItem("player2", player2);
+            const player1 = document.querySelector('.player-1-name-text').value || "Player 1";
+            const player2 = document.querySelector('.player-2-name-text').value || "Player 2";
 
-    
-    window.location.href = "gamemode.html";
-}
-</script>
+            localStorage.setItem("player1", player1);
+            localStorage.setItem("player2", player2);
 
+            setTimeout(() => {
+                window.location.href = "gamemode.html";
+            }, 150);
+        }
+    </script>
 </body>
 </html>

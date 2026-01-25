@@ -7,49 +7,57 @@
     <title>Clash-Of-Boots</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="futsal.css" type="text/css">
+    <script src="music.js"></script>
 </head>
 
 <body>
-    
-    <div class="top-bar">
-    <span class="left-score"></span>
-    <span class="center-text" style="padding-left: 20px; font-size: 55px;">VS</span>
-    <span class="right-score"></span>
-</div>
-    <div class="background">
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+        <div class="audio-btn active" id="musicBtn" title="Toggle Music">
+            <i class="fa-solid fa-music"></i>
+        </div>
+        <div class="audio-btn active" id="sfxBtn" title="Toggle Sound Effects">
+            <i class="fa-solid fa-bell"></i>
+        </div>
+    </div>
 
+       <!-- VS Overlay -->
+<div id="vs-overlay">
+    <div id="vs-text">Player 1 VS Player 2</div>
+</div>
+<div id="goal-confetti" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+
+    <div class="top-bar">
+        <span class="left-score"></span>
+        <span class="center-text" style="padding-left: 20px; font-size: 55px;">VS</span>
+        <span class="right-score"></span>
+    </div>
+
+    <div class="background">
         <div class="right">
             <div class="menu">
                 <i class="fa-solid fa-list "></i>
-                <div class="dropdown">
-                   
-                    <ul>
-                        <li id="reset">Restart</li>
-                        <a href ="start.html">Exit</a>
-                    </ul>
-                </div>
             </div>
         </div>
 
         <div class="team-container">
-            
+
 
             <div class="team-1-box">
                 <div class="team-1"> </div>
                 <div class="team-red">
-                    <p class="player-name red-name">player 1</p>
+                    <p class="player-name red-name"></p>
                     <p class="score-count red-score">0</p>
                 </div>
             </div>
             <div class="turn-board">
                 <div class="turn">
                     <p>0/30</p>
-
                 </div>
             </div>
             <div class="team-2-box">
                 <div class="team-blue">
-                    <p class="player-name blue-name">player 2</p>
+                    <p class="player-name blue-name"></p>
                     <p class="score-count blue-score">0</p>
                 </div>
                 <div class="team-2"> </div>
@@ -59,23 +67,51 @@
             <div class="futsal"></div>
         </div>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
-    <script src="futsal.js"></script> 
+    <script src="futsal.js"></script>
 
-    <script>
-        const player1 = localStorage.getItem("player1") || "Player 1";
-        const player2 = localStorage.getItem("player2") || "Player 2";
+ <script>
 
-        document.querySelector(".red-name").innerText = player1;
-        document.querySelector(".blue-name").innerText = player2;
+document.addEventListener("DOMContentLoaded", function () {
+    const player1 = localStorage.getItem("player1") || "Player 1";
+    const player2 = localStorage.getItem("player2") || "Player 2";
 
+    // ✅ ALWAYS update scoreboard immediately
+    const leftScore = document.querySelector(".red-name");
+    const centerText = document.querySelector(".center-text");
+    const rightScore = document.querySelector(".blue-name");
 
-</script>   
+    if (leftScore) leftScore.innerText = player1;
+    if (centerText) centerText.innerText = "VS";
+    if (rightScore) rightScore.innerText = player2;
 
-<body>
+    // --- VS Overlay ---
+    const vsText = document.getElementById("vs-text");
+    const overlay = document.getElementById("vs-overlay");
 
+    if (vsText) {
+        vsText.innerText = `${player1} VS ${player2}` ;
+    }
 
-    <!-- PAUSE OVERLAY GOES HERE -->
+    if (overlay && vsText) {
+        vsText.addEventListener("animationend", () => {
+            overlay.remove();
+
+            // 🔥 notify futsal.js that VS animation finished
+            document.dispatchEvent(new Event("vsAnimationFinished"));
+        });
+    } else {
+        // fallback (no overlay)
+        document.dispatchEvent(new Event("vsAnimationFinished"));
+    }
+});
+
+</script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- PAUSE OVERLAY -->
     <div id="pauseOverlay" class="pause-overlay hidden">
         <div class="pause-popup">
             <h2>Game Paused</h2>
@@ -84,8 +120,6 @@
             <a href="start.html" class="exit-btn">Exit</a>
         </div>
     </div>
-
-</body>
 
 </body>
 

@@ -10,40 +10,10 @@
     width: 100%;
     height: 100vh;
     overflow: visible;
-   
 }
 .right{
     position: absolute;
     display: inline-block;
-}
-.dropdown{
-    position: absolute;
-    display:none;
-    background-color: rgba(0,0,0,0.5);
-    top:100%;
-    right:0;
-    border-radius: 4px;
-    
-}
-.dropdown ul{
-    list-style:none;
-    margin:0;
-    padding:0;
-}
-.dropdown li{
-    padding: 10px 15px;
-    color: white;
-    z-index: 1000;
-}
-.dropdown a{
-    padding: 10px 15px;
-    text-decoration:none;
-    color: red;
-}
-
-.dropdown li:hover{
-   color: yellow;
-  
 }
 .menu {
     position: fixed;       
@@ -57,7 +27,6 @@
 .menu:active {
     transform: scale(0.9); 
 }
-
 
 .team-container {
     width: 100%;
@@ -74,6 +43,7 @@
     font-size: smaller;
     position:relative;
 }
+
 .team-1,
 .team-2 {
     width: 22%;
@@ -103,7 +73,10 @@
     font-weight: bolder;
     display: inline-flex;
     align-self: center;
-    width: auto;
+    max-width: 280px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+        display: block;
 }
 
 .red-name {
@@ -113,19 +86,15 @@
 .blue-name {
     float: right;
 }
+
 .red-score,
 .blue-score{
     display:inline-block;
     width: 50px;
     font-weight: bold;
     color: #c7deef;
+}
 
-}
-.red-score{
-    position:absolute;
-    top:5px;
-    left:400px;
-}
 
 .score-count {
     width: auto;
@@ -135,23 +104,19 @@
     display: inline-flex;
     margin-top: -8px;
     height: 90px;
-    /* position: fixed;
-    top:60px;
-    left:100px; */
 }
 
 .red-score{
     border-right: 3px solid white;
     padding-right: 8px;
+    float: right;
 }
 
 .blue-score{
     border-left: 3px solid white;
     padding-left: 8px;
     z-index: 1;
-    /* margin-right: 100px; */
 }
-
 
 .turn-board {
     width: 15%;
@@ -171,10 +136,6 @@
     border-radius: 50px;
     font-size: 30px;
     color: rgb(72, 96, 130);
-    /* background-image: url(./img/score.png);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;  */
 }
 
 .turn p {
@@ -186,33 +147,25 @@
     left:70px;
 }
 
-
-
 .top-bar {
     width: 75%;                       
     height: 90px;                      
     background-color: rgba(95, 145, 199, 0.95); 
     border-radius: 60px;               
-    /* box-shadow: 0 6px 15px rgba(87, 134, 153, 0.25); */
-
     display: flex;
     justify-content: space-between;     
     align-items: center;
     padding: 0 40px;                   
-
     font-size: 40px;
     font-weight: bold;
     box-shadow: 0 60px 15px -60px rgba(0,0,0,0.25); 
-
-    /* 🔥 TOP CENTER POSITION */
     position:absolute;                    
     top: 0px;                           
     left: 50%;                           
-    transform: translateX(-50%);         
-   
+    transform: translateX(-50%);      
+    overflow:hidden;   
 }
 
-/* Individual text styling */
 .left-score {
     color: rgb(236, 123, 123);
 }
@@ -226,28 +179,23 @@
     color: rgb(93, 214, 200);
 }
 
-
-
 .team-red {
     font-family: 'Times New Roman', Times, serif;
     position: absolute;
     top: 5px;
     left:250px;
     color:rgb(32, 11, 51);
-
+    width: 445px;
 }
+
 .team-blue {
     font-family: 'Times New Roman', Times, serif;
     position: absolute;
     top: 5px;
-    /* left:250px; */
     color:rgb(45, 30, 10);
     width: 400px;
     height: 82px;
 }
-
-
-
 
 .futsal-box {
     width: 100%;
@@ -266,15 +214,11 @@
     background-position: center;
 }
 
-
-
-/* PAUSE OVERLAY */
 .pause-overlay {
     position: fixed;
-    inset: 0; /*shortcut for top=0, right, bottom left =0*/
+    inset: 0;
     background: rgba(0, 0, 0, 0.6);
     z-index: 9999;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -325,3 +269,145 @@
     display: none;
 }
 
+/* VS Overlay */
+#vs-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* dim background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* VS Text */
+#vs-text {
+    font-size: 80px;
+    font-weight: bold;
+    color: #f9d342;
+    transform: scale(0);
+    opacity: 0;
+    animation:popVS 3s ease forwards;
+}
+
+/* VS Animation */
+@keyframes popVS {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+
+/* INDICATOR HO HAI */
+.turn-indicator {
+    position: fixed;
+    top: 120px;
+    padding: 15px 30px;
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* RED (LEFT) */
+.red-turn {
+    background: crimson;
+    left: -300px;
+    border-radius: 0 40px 40px 0;
+}
+
+/* BLUE (RIGHT) */
+.blue-turn {
+    background: dodgerblue;
+    right: -300px;
+    border-radius: 40px 0 0 40px;
+}
+
+/* SHOW ANIMATIONS */
+.show-red {
+    animation: slideInLeft 0.8s ease forwards;
+}
+
+.show-blue {
+    animation: slideInRight 0.8s ease forwards;
+}
+
+/* HIDE ANIMATIONS */
+.hide-red {
+    animation: slideOutLeft 0.6s ease forwards;
+}
+
+.hide-blue {
+    animation: slideOutRight 0.6s ease forwards;
+}
+
+/* KEYFRAMES */
+@keyframes slideInLeft {
+    from { left: -300px; opacity: 0; }
+    to { left: 0; opacity: 1; }
+}
+
+@keyframes slideOutLeft {
+    from { left: 0; opacity: 1; }
+    to { left: -300px; opacity: 0; }
+}
+
+@keyframes slideInRight {
+    from { right: -300px; opacity: 0; }
+    to { right: 0; opacity: 1; }
+}
+
+@keyframes slideOutRight {
+    from { right: 0; opacity: 1; }
+    to { right: -300px; opacity: 0; }
+}
+/* Audio Controls - LEFT SIDE - STACKED VERTICALLY */
+.audio-controls {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.audio-btn {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.audio-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+.audio-btn.active {
+    background-color: #4CAF50;
+}
+
+.audio-btn i {
+    font-size: 24px;
+    color: white;
+}
+
+.audio-btn.muted {
+    background-color: #ff4444;
+}
+
+.audio-btn.muted:hover {
+    background-color: #cc0000;
+}

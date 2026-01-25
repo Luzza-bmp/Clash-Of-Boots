@@ -4,23 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clash-Of-Boots</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="start.css" rel="stylesheet" type="text/css">
+    <script src="music.js"></script>
 </head>
 <body>
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+        <div class="audio-btn active" id="musicBtn" title="Toggle Music">
+            <i class="fa-solid fa-music"></i>
+        </div>
+        <div class="audio-btn active" id="sfxBtn" title="Toggle Sound Effects">
+            <i class="fa-solid fa-bell"></i>
+        </div>
+    </div>
+
     <div class="background">
         <div class="game-logo-box"><div class="game-logo"></div></div>
         <div class="game-enter-box">
-            <a href="player.html" target="_parent">
-                <div class="game-enter"></div>
-            </a>
+             <div class="game-enter" onclick="startGame()"></div>
         </div> 
     </div>
 
-    
-   <audio controls>
-    <source src="Clash-Of-Boots/audio/click.wav" type="audio/wav">
-</audio>
+    <div class="popup-overlay" id="popup"></div>
 
+    <script>
+        function startGame() {
+            const popup = document.getElementById("popup");
+            popup.classList.add("show"); // trigger animation
+
+            // go to next page after animation
+            setTimeout(() => {
+                window.location.href = "player.html"; // change to your next page
+            }, 1000); // 1 second delay for animation
+        }
+    </script>
 
 </body>
 </html>
