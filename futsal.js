@@ -176,88 +176,88 @@ document.addEventListener("DOMContentLoaded", function () {
         Bodies.rectangle(width / 2, fieldMarginY + 20, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallTop',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         // Bottom wall
         Bodies.rectangle(width / 2, height - fieldMarginY - 13, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallBottom',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         // Left wall segments (above and below goal)
         Bodies.rectangle(fieldMarginX + 102, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
             isStatic: true,
             label: 'WallLeftTop',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(fieldMarginX + 102, height / 2 + GOAL_WIDTH / 2 + 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 - 10, {
             isStatic: true,
             label: 'WallLeftBottom',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         // Right wall segments (above and below goal)
         Bodies.rectangle(width - fieldMarginX - 103, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
             isStatic: true,
             label: 'WallRightTop',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(width - fieldMarginX - 103, height / 2 + GOAL_WIDTH / 2 + 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 - 12, {
             isStatic: true,
             label: 'WallRightBottom',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         // Left goal walls
         Bodies.rectangle(fieldMarginX - goalDepthOffset + 40, (height / 2) + 5, WALL_THICKNESS, GOAL_WIDTH + 50, {
             isStatic: true,
             label: 'LeftGoalBack',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(fieldMarginX - goalDepthOffset / 2 + 70, height / 2 - GOAL_WIDTH / 2 - 20, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'LeftGoalTop',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(fieldMarginX - goalDepthOffset / 2 + 70, height / 2 + GOAL_WIDTH / 2 + 27, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'LeftGoalBottom',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         // Right goal walls
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset - 40, height / 2 + 5, WALL_THICKNESS, GOAL_WIDTH + 60, {
             isStatic: true,
             label: 'RightGoalBack',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset / 2 - 73, height / 2 - GOAL_WIDTH / 2 - 18, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalTop',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset / 2 - 73, height / 2 + GOAL_WIDTH / 2 + 28, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalBottom',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         // Corner walls
         Bodies.rectangle(fieldMarginX / 2 + 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerTopLeft',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(width - fieldMarginX / 2 - 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerTopRight',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(fieldMarginX / 2 + 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerBottomLeft',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         }),
         Bodies.rectangle(width - fieldMarginX / 2 - 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerBottomRight',
-            render: { fillStyle: 'transparent' }
+            render: { fillStyle: 'tansparent' }
         })
     ];
 
@@ -266,14 +266,14 @@ document.addEventListener("DOMContentLoaded", function () {
         isStatic: true,
         isSensor: true,
         label: 'GoalLeft',
-        render: { fillStyle: 'transparent' }
+        render: { fillStyle: 'tansparent' }
     });
 
     var goalRight = Bodies.rectangle(width - fieldMarginX - 55, height / 2 + 5, GOAL_DEPTH + 20, GOAL_WIDTH + 16, {
         isStatic: true,
         isSensor: true,
         label: 'GoalRight',
-        render: { fillStyle: 'transparent' }
+        render: { fillStyle: 'tansparent' }
     });
 
     Composite.add(engine.world, [...walls, goalLeft, goalRight]);
@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 var forwardDir = isRed ? 1 : -1;
 
                 return [
-                    { x: baseX, y: height / 2 },
+                    { x: baseX - 10, y: height / 2 },
                     { x: midX - (50 * forwardDir), y: height / 2 - 100 },
                     { x: midX - (50 * forwardDir), y: height / 2 + 100 },
                     { x: midX + (80 * forwardDir), y: height / 2 - 60 },
@@ -491,7 +491,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Logic moved inside the shot execution block to prevent wasting it on cancelled drags
         var dragMultiplier = 0.0006;
         if (storedPowerup[gameState.turn]) {
-            currentMaxForce = baseForce * 5.0; // Drastic increase
+            currentMaxForce = baseForce * 3.0; // Drastic increase
             dragMultiplier = 0.0018; // 3x sensitivity - barely dragging triggers huge power
         }
 
@@ -787,7 +787,7 @@ document.addEventListener("DOMContentLoaded", function () {
         players.push(createPlayer(rightMidX + 50, height / 2 - 100, 'blue'));
         players.push(createPlayer(rightMidX + 50, height / 2 + 100, 'blue'));
         players.push(createPlayer(rightMidX - 80, height / 2 - 60, 'blue'));
-        players.push(createPlayer(rightMidX - 80, height / 2 + 60, 'blue'));
+        players.push(createPlayer(rightMidX - 90, height / 2 + 60, 'blue'));
 
         ball = createBall(width / 2, height / 2);
 
@@ -837,17 +837,20 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Remove mystery box if expired
-        if (mysteryBox && gameState.turnCount > mysteryBoxTurn) {
-            Composite.remove(engine.world, mysteryBox);
-            mysteryBox = null;
-            mysteryBoxTurn = null;
-        }
-
         // Switch turn
         // Reset slow effect for the team that just finished their turn
         if (opponentSlowed[gameState.turn]) {
             opponentSlowed[gameState.turn] = false;
+        }
+
+        gameState.turn = gameState.turn === 'red' ? 'blue' : 'red';
+        gameState.turnCount++;
+
+        // Remove mystery box if expired (after 2 turns) - Check AFTER incrementing turnCount
+        if (mysteryBox && gameState.turnCount > mysteryBoxTurn + 1) {
+            Composite.remove(engine.world, mysteryBox);
+            mysteryBox = null;
+            mysteryBoxTurn = null;
         }
 
         // Spawn mystery box logic
@@ -863,13 +866,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 lastMysteryBoxSpawn = gameState.turnCount;
             }
         }
-
-        gameState.turn = gameState.turn === 'red' ? 'blue' : 'red';
-        gameState.turnCount++;
-        // Time limit check
+        // Time limit check - Game Over after 30 turns
         if (gameState.turnCount > 30) {
-            alert("Game Over! Time limit reached.");
-            gameState.turnCount = 30;
+            // Get player names
+            const player1 = localStorage.getItem("player1") || "Player 1";
+            const player2 = localStorage.getItem("player2") || "Player 2";
+
+            // Determine winner based on score
+            if (gameState.score.red > gameState.score.blue) {
+                // Red wins
+                localStorage.setItem("winnerTeam", "red");
+                localStorage.setItem("winnerName", player1);
+            } else if (gameState.score.blue > gameState.score.red) {
+                // Blue wins
+                localStorage.setItem("winnerTeam", "blue");
+                localStorage.setItem("winnerName", player2);
+            } else {
+                // Draw
+                localStorage.setItem("winnerTeam", "draw");
+                localStorage.setItem("winnerName", "Draw");
+            }
+
+            // Redirect to victory page
+            setTimeout(function () {
+                window.location.href = "victory.html";
+            }, 500);
+
+            return;
         }
 
         updateTurnDisplay();

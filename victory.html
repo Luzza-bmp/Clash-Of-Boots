@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +9,10 @@
     <link rel="stylesheet" href="victory.css" type="text/css">
     <script src="music.js"></script>
 </head>
+
 <body>
-        <!-- AUDIO CONTROLS -->
-  <div class="audio-controls">
+    <!-- AUDIO CONTROLS -->
+    <div class="audio-controls">
         <div class="audio-btn active" id="musicBtn" title="Toggle Music">
             <i class="fa-solid fa-music"></i>
         </div>
@@ -19,10 +21,10 @@
         </div>
     </div>
     <div class="dim-overlay"></div>
-<h1 id="winner-text"></h1>
-<div class="winner-popup">
-    <img src="./popper.gif" alt="Winner Sticker">
-</div>
+    <h1 id="winner-text"></h1>
+    <div class="winner-popup">
+        <img src="./popper.gif" alt="Winner Sticker">
+    </div>
 
 
     <div class="background">
@@ -40,48 +42,57 @@
             </div>
         </div>
     </div>
-    
 
 
- <script>
-    // PLAY AGAIN (same players)
-    document.getElementById("playBtn").addEventListener("click", () => {
-        // Only remove winner, keep players
-        localStorage.removeItem("winnerName");
 
-        // Go directly to futsal page
-        window.location.href = "futsal.html";
-    });
+    <script>
+        // PLAY AGAIN (same players)
+        document.getElementById("playBtn").addEventListener("click", () => {
+            // Only remove winner, keep players
+            localStorage.removeItem("winnerName");
 
-    // EXIT TO START (reset everything)
-    document.getElementById("exitBtn").addEventListener("click", () => {
-        // Clear all saved data
-        localStorage.clear();
+            // Go directly to futsal page
+            window.location.href = "futsal.html";
+        });
 
-        // Go to start page
-        window.location.href = "start.html";
-    });
-</script>
-<script>
-    const winnerName = localStorage.getItem("winnerName") || "Winner";
+        // EXIT TO START (reset everything)
+        document.getElementById("exitBtn").addEventListener("click", () => {
+            // Clear all saved data
+            localStorage.clear();
 
-    // put winner name wherever you want
-    // example: animated popup text
-    const title = document.createElement("h1");
-    title.innerText = winnerName + " WINS!";
-    title.style.position = "fixed";
-    title.style.top = "45%";
-    title.style.left = "50%";
-    title.style.transform = "translate(-50%, -50%) scale(0)";
-    title.style.fontSize = "70px";
-    title.style.color = "black";
-    title.style.textShadow = "0 0 20px orange";
-    title.style.animation = "popWinner 0.9s ease-out forwards";
+            // Go to start page
+            window.location.href = "start.html";
+        });
+    </script>
+    <script>
+        const winnerName = localStorage.getItem("winnerName") || "Winner";
+        const winnerTeam = localStorage.getItem("winnerTeam") || "";
 
-    document.body.appendChild(title);
-</script>
+        // Determine the message based on whether it's a draw or a win
+        let message;
+        if (winnerTeam === "draw") {
+            message = "IT'S A DRAW!";
+        } else {
+            message = winnerName + " WINS!";
+        }
+
+        // Create animated popup text
+        const title = document.createElement("h1");
+        title.innerText = message;
+        title.style.position = "fixed";
+        title.style.top = "45%";
+        title.style.left = "50%";
+        title.style.transform = "translate(-50%, -50%) scale(0)";
+        title.style.fontSize = "70px";
+        title.style.color = "black";
+        title.style.textShadow = "0 0 20px orange";
+        title.style.animation = "popWinner 0.9s ease-out forwards";
+
+        document.body.appendChild(title);
+    </script>
 
 
-   
+
 </body>
+
 </html>
